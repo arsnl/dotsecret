@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.mts,.cts",
+    "type": "tsc --noEmit",
+    "check": "npm run lint && npm run type",
+    "fix": "npm run lint -- --fix"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
@@ -16,7 +19,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",
-    "@repo/eslint-config": "workspace:*",
+    "eslint-config-peppy": "3.1.1",
     "@repo/typescript-config": "workspace:*",
     "@types/eslint": "^8.56.1",
     "@types/node": "^20.10.6",
