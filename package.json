@@ -1,21 +1,20 @@
 {
   "name": "dotsecret",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
-    "format": "prettier --check .",
-    "fix": "prettier --write --log-level warn . && npm run lint -- --fix"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "keywords": [],
-  "author": "Mark Arseneault",
-  "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-peppy": "^3.1.1",
-    "prettier": "^3.2.4",
-    "turbo": "^1.11.3"
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "prettier": "^3.1.1",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18"
   }
 }
