@@ -6,6 +6,8 @@
     // Prettier Formatter for Visual Studio Code
     "esbenp.prettier-vscode",
     // EditorConfig for VS Code
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    // Astro Framework for VS Code
+    "astro-build.astro-vscode"
   ]
 }

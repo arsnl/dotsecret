@@ -1,31 +1,17 @@
 {
   "name": "web",
-  "version": "1.0.0",
-  "private": true,
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.mts,.cts",
-    "type": "tsc --noEmit",
-    "check": "npm run lint && npm run type",
-    "fix": "npm run lint -- --fix"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
-    "next": "^14.0.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@next/eslint-plugin-next": "^14.0.4",
-    "eslint-config-peppy": "3.1.1",
-    "@repo/typescript-config": "workspace:*",
-    "@types/eslint": "^8.56.1",
-    "@types/node": "^20.10.6",
-    "@types/react": "^18.2.46",
-    "@types/react-dom": "^18.2.18",
-    "eslint": "^8.56.0",
+    "astro": "^4.2.6",
+    "@astrojs/check": "^0.4.1",
     "typescript": "^5.3.3"
   }
 }
