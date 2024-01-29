@@ -1,17 +1,15 @@
 {
-  "name": "dotsecret",
-  "private": true,
   "scripts": {
     "build": "turbo build",
+    "check": "pnpm format && turbo check",
     "dev": "turbo dev",
+    "fix": "prettier --write --log-level warn . && turbo fix",
     "format": "prettier --check .",
     "lint": "turbo lint",
-    "type": "turbo type",
-    "check": "pnpm format && turbo check",
-    "fix": "prettier --write --log-level warn . && turbo fix"
+    "type": "turbo type"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "dotsecret": "workspace:*",
     "eslint": "8.56.0",
     "eslint-config-peppy": "3.1.1",
     "prettier": "3.2.4",
