@@ -12,19 +12,13 @@
   "type": "module",
   "license": "MIT",
   "author": "arsnl",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/cli.d.ts",
   "bin": {
     "dotsecret": "dist/cli.js"
   },
-  "files": [
-    "/dist",
-    "/assets",
-    "/schema.json"
-  ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsx scripts/build.ts",
+    "dev": "tsx scripts/build.ts --dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.mts,.cts",
     "type": "tsc --noEmit",
@@ -53,6 +47,9 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
+    "tsx": "4.7.0",
+    "shx": "0.3.4",
+    "yalc": "1.0.0-pre.53",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.14.202",
