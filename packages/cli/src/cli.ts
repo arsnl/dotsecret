@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import pkg from "@root/package.json";
+import pkg from "@pkg";
 import { getAuditCommand } from "@/commands/audit";
 import { getConfigCommand } from "@/commands/config";
 import { getProjectsCommand } from "@/commands/projects";

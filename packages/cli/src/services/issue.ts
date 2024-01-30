@@ -1,4 +1,4 @@
-import pkg from "@root/package.json";
+import pkg from "@pkg";
 import chalk from "chalk";
 import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";

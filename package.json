@@ -1,8 +1,12 @@
 {
   "scripts": {
     "build": "turbo build",
-    "check": "pnpm format && turbo check",
+    "build:web": "turbo build --filter=./apps/web",
+    "build:cli": "turbo build --filter=./packages/cli",
     "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=./apps/web",
+    "dev:cli": "turbo dev --filter=./packages/cli",
+    "check": "pnpm format && turbo check",
     "fix": "prettier --write --log-level warn . && turbo fix",
     "format": "prettier --check .",
     "lint": "turbo lint",

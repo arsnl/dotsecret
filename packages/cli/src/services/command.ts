@@ -1,4 +1,4 @@
-import pkg from "@root/package.json";
+import pkg from "@pkg";
 import boxen from "boxen";
 import chalk from "chalk";
 import { Command } from "commander";
