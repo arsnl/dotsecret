@@ -16,7 +16,7 @@
     "dotsecret": "workspace:*",
     "eslint": "8.56.0",
     "eslint-config-peppy": "3.1.1",
-    "prettier": "3.2.4",
+    "prettier": "3.2.5",
     "turbo": "latest"
   },
   "packageManager": "pnpm@8.9.0",
