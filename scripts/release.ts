@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import { $, execa } from "execa";
+import { $ } from "execa";
 import nodeFs from "node:fs";
+import nodePath from "node:path";
+
+const cwd = nodePath.join(__dirname, "..");
 
 const hasChangesets = async () => {
   try {
-    await execa("npx", ["changeset", "status"], { stdio: "ignore" });
+    await $({ stdio: "ignore", cwd })`npx changeset status`;
     return true;
   } catch {
     return false;
@@ -29,7 +32,7 @@ const isPreMode = () => {
   const isNext = process.argv.includes("--next");
 
   if (isNext && !isPreMode()) {
-    await $`npx changeset pre enter next`;
+    await $({ cwd })`npx changeset pre enter next`;
 
     if (!isPreMode()) {
       console.error("Failed to enter pre mode");
@@ -38,7 +41,7 @@ const isPreMode = () => {
   }
 
   if (!isNext && isPreMode()) {
-    await $`npx changeset pre exit`;
+    await $({ cwd })`npx changeset pre exit`;
 
     if (isPreMode()) {
       console.error("Failed to exit pre mode");
@@ -51,5 +54,5 @@ const isPreMode = () => {
     process.exit(0);
   }
 
-  await $`npx changeset version`;
+  await $({ cwd })`npx changeset version`;
 })();
