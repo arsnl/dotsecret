@@ -1,0 +1,5 @@
+---
+"dotsecret": patch
+---
+
+add changeset

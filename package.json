@@ -1,4 +1,7 @@
 {
+  "name": "root",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "build": "turbo build",
     "build:web": "turbo build --filter=./apps/web",
@@ -6,6 +9,8 @@
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=./apps/web",
     "dev:cli": "turbo dev --filter=./packages/cli",
+    "release:latest": "tsx scripts/release.ts",
+    "release:next": "tsx scripts/release.ts --next",
     "check": "pnpm format && turbo check",
     "fix": "prettier --write --log-level warn . && turbo fix",
     "format": "prettier --check .",
@@ -13,6 +18,10 @@
     "type": "turbo type"
   },
   "devDependencies": {
+    "execa": "8.0.1",
+    "shx": "0.3.4",
+    "tsx": "4.7.1",
+    "@changesets/cli": "2.27.1",
     "eslint": "8.56.0",
     "eslint-config-peppy": "3.1.1",
     "prettier": "3.2.5",
