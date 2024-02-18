@@ -2,11 +2,21 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/cli.ts"],
+  entry: ["src/index.ts", "src/cli.ts"],
   outDir: "dist",
-  dts: false,
-  splitting: true,
+  dts: true,
   sourcemap: false,
-  format: ["esm"],
+  format: ["cjs", "esm"],
   clean: true,
+  // We need to include theses packages in the bundle since they are ESM only and need to be converted to CJS.
+  noExternal: [
+    "boxen",
+    "chalk",
+    "color-json",
+    "execa",
+    "find-up",
+    "globby",
+    "multimatch",
+    "ora",
+  ],
 });

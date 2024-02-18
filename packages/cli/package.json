@@ -9,16 +9,24 @@
   "repository": {
     "url": "https://github.com/arsnl/dotsecret.git"
   },
-  "type": "module",
   "license": "MIT",
   "author": "arsnl",
-  "types": "dist/cli.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "bin": {
     "dotsecret": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsx scripts/build.ts",
-    "dev": "tsx scripts/build.ts --dev",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.mts,.cts",
     "type": "tsc --noEmit",
