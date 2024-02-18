@@ -47,8 +47,8 @@ const isPreMode = () => {
   }
 
   if (!(await hasChangesets())) {
-    console.error("No changeset found");
-    process.exit(1);
+    console.log("No changeset found");
+    process.exit(0);
   }
 
   await $`npx changeset version`;
