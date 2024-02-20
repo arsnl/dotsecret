@@ -50,7 +50,7 @@ const isPreMode = () => {
   }
 
   if (!(await hasChangesets())) {
-    console.log("No changeset found");
+    console.log("No changeset found. No release needed.");
     process.exit(0);
   }
 
