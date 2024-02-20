@@ -51,6 +51,8 @@ const isPreMode = () => {
     }
   }
 
+  await $({ cwd, stdio: "inherit" })`ls .changeset`;
+
   if (!(await hasChangesets())) {
     console.log("No changeset found. No release needed.");
     process.exit(0);
