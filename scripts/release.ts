@@ -31,8 +31,6 @@ const isPreMode = () => {
 (async () => {
   const isNext = process.argv.includes("--next");
 
-  await $({ cwd, stdio: "inherit" })`ls .changeset`;
-
   if (isNext && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
 
@@ -50,6 +48,8 @@ const isPreMode = () => {
       process.exit(1);
     }
   }
+
+  await $({ cwd, stdio: "inherit" })`ls .changeset`;
 
   if (!(await hasChangesets())) {
     console.log("No changeset found. No release needed.");
