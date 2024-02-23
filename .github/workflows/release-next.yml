@@ -10,6 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
     name: Release Next
+    if: github.repository == 'arsnl/dotsecret'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo

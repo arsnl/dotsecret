@@ -6,11 +6,20 @@ import nodeFs from "node:fs";
 import nodePath from "node:path";
 
 const cwd = nodePath.join(__dirname, "..");
+const isNext = process.argv.includes("--next");
 
 const hasChangesets = async () => {
   try {
-    await $({ stdio: "ignore", cwd })`npx changeset status`;
-    return true;
+    await $({
+      stdio: "ignore",
+      cwd,
+    })`npx changeset status --since ${isNext ? "next" : "main"}  --output=changeset-status.json`;
+
+    const changesetStatus = JSON.parse(
+      nodeFs.readFileSync("./changeset-status.json", "utf-8"),
+    ) as { changesets: any[]; releases: any[] };
+
+    return !!changesetStatus?.changesets?.length;
   } catch {
     return false;
   }
@@ -29,10 +38,6 @@ const isPreMode = () => {
 };
 
 (async () => {
-  const isNext = process.argv.includes("--next");
-
-  await $({ cwd, stdio: "inherit" })`ls .changeset`;
-
   if (isNext && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
 
@@ -51,10 +56,8 @@ const isPreMode = () => {
     }
   }
 
-  await $({ cwd, stdio: "inherit" })`ls .changeset`;
-
   if (!(await hasChangesets())) {
-    console.log("No changeset found. No release needed.");
+    console.error("No release needed");
     process.exit(0);
   }
 
