@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.2
+
+### Patch Changes
+
+- [`ca3c73f`](https://github.com/arsnl/dotsecret/commit/ca3c73f52d6a267a39064d65150b3c6cee7a1861) Thanks [@arsnl](https://github.com/arsnl)! - Add build step
+
 ## 0.0.0-next.1
 
 ### Patch Changes
