@@ -53,10 +53,5 @@ const exitPreMode = async () => {
     await exitPreMode();
   }
 
-  await exec("npx", [
-    "changeset",
-    "publish",
-    "--tag",
-    next ? "next" : "latest",
-  ]);
+  await exec("npx", ["changeset", "publish"]);
 })();
