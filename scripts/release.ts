@@ -51,6 +51,18 @@ const hasChangesets = async ({ verbose }: { verbose: boolean }) => {
   }
 };
 
+const bump = async ({ verbose }: { verbose: boolean }) => {
+  try {
+    verbose && console.log("Bumping version");
+
+    await exec("npx", ["changeset", "version"]);
+  } catch (error) {
+    console.error("Failed to bump version");
+    console.error(error);
+    process.exit(1);
+  }
+};
+
 const getVersion = async ({ verbose }: { verbose: boolean }) => {
   try {
     verbose && console.log("Getting version");
@@ -61,14 +73,10 @@ const getVersion = async ({ verbose }: { verbose: boolean }) => {
 
     const version = packageJson?.version;
     const tag = `v${version}`;
-    const releaseLine = `v${version.split(".")[0]}`;
 
-    verbose &&
-      console.log(
-        `version: ${version}, tag: ${tag}, releaseLine: ${releaseLine}`,
-      );
+    verbose && console.log(`version: ${version}, tag: ${tag}`);
 
-    return { version, tag, releaseLine };
+    return { version, tag };
   } catch (error) {
     console.log("Failed to get version");
     console.error(error);
@@ -76,14 +84,30 @@ const getVersion = async ({ verbose }: { verbose: boolean }) => {
   }
 };
 
-const bump = async ({ verbose }: { verbose: boolean }) => {
-  try {
-    verbose && console.log("Bumping version");
+const validateTag = async ({
+  tag,
+  verbose,
+}: {
+  tag: string;
+  verbose: boolean;
+}) => {
+  verbose && console.log("Validating tag");
 
-    await exec("npx", ["changeset", "version"]);
-  } catch (error) {
-    console.error("Failed to bump version");
-    console.error(error);
+  const { exitCode, stderr } = await getExecOutput(
+    `git`,
+    ["ls-remote", "--exit-code", "origin", "--tags", `refs/tags/${tag}`],
+    {
+      ignoreReturnCode: true,
+    },
+  );
+  if (exitCode === 0) {
+    console.log(
+      `Action is not being published because version ${tag} is already published`,
+    );
+    process.exit(1);
+  }
+  if (exitCode !== 2) {
+    console.error(`git ls-remote exited with ${exitCode}:\n${stderr}`);
     process.exit(1);
   }
 };
@@ -160,6 +184,6 @@ const exitPreMode = async ({ verbose }: { verbose: boolean }) => {
 
   await bump({ verbose });
   const version = await getVersion({ verbose });
-
+  await validateTag({ tag: version.tag, verbose });
   await createNpmrc({ token: NPM_TOKEN, verbose });
 })();
