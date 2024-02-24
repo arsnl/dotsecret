@@ -54,7 +54,8 @@ const isPreMode = () => {
     console.log("");
   }
 
-  $({
+  await $({
+    stdio: "inherit",
     cwd,
     verbose,
   })`npx --yes pokemon-cli`;
