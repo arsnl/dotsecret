@@ -5,5 +5,11 @@
     "web": "0.0.0",
     "dotsecret": "0.0.0-next.0"
   },
-  "changesets": []
+  "changesets": [
+    "bright-knives-bow",
+    "brown-pets-complain",
+    "curly-penguins-fix",
+    "many-schools-raise",
+    "sixty-peas-sing"
+  ]
 }
