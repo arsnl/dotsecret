@@ -54,10 +54,6 @@ const isPreMode = () => {
     console.log("");
   }
 
-  await hasChangesets();
-
-  process.exit(0);
-
   if (next && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
 
