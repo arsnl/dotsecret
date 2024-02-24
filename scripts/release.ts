@@ -14,7 +14,7 @@ const hasChangesets = async () => {
   const releasePlanFile = "./release-plan.json";
 
   try {
-    verbose && console.log("ℹ️ Getting changeset status");
+    verbose && console.log("Getting changeset status");
 
     await $({
       cwd,
@@ -26,17 +26,12 @@ const hasChangesets = async () => {
       nodeFs.readFileSync(releasePlanFile, "utf-8"),
     ) as ReleasePlan;
 
-    verbose && console.log("Release plan");
-    verbose && console.log("---");
     verbose && console.log(JSON.stringify(releasePlan, null, 2));
-    verbose && console.log("---");
 
     return !!releasePlan?.changesets?.length;
   } catch (error) {
     verbose && console.log("Failed to get changeset status");
-    verbose && console.log("---");
     verbose && console.error(error);
-    verbose && console.log("---");
 
     return false;
   }
@@ -44,23 +39,18 @@ const hasChangesets = async () => {
 
 const isPreMode = () => {
   try {
-    verbose && console.log("ℹ️ Getting pre state");
+    verbose && console.log("Getting pre state");
 
     const preState = JSON.parse(
       nodeFs.readFileSync(".changeset/pre.json", "utf-8"),
     ) as PreState;
 
-    verbose && console.log("Pre State");
-    verbose && console.log("---");
     verbose && console.log(JSON.stringify(preState, null, 2));
-    verbose && console.log("---");
 
     return preState?.mode === "pre";
   } catch (error) {
     verbose && console.log("Failed to get pre state");
-    verbose && console.log("---");
     verbose && console.error(error);
-    verbose && console.log("---");
 
     return false;
   }
@@ -68,12 +58,10 @@ const isPreMode = () => {
 
 (async () => {
   verbose && console.log("Executing release script");
-  verbose && console.log("---");
   verbose && console.log(`cwd: ${cwd}\nnext: ${next}`);
-  verbose && console.log("---");
 
   if (next && !isPreMode()) {
-    verbose && console.log("ℹ️ Entering pre mode");
+    verbose && console.log("Entering pre mode");
 
     await $({
       cwd,
@@ -88,7 +76,7 @@ const isPreMode = () => {
   }
 
   if (!next && isPreMode()) {
-    verbose && console.log("ℹ️ Exiting pre mode");
+    verbose && console.log("Exiting pre mode");
 
     await $({
       cwd,
