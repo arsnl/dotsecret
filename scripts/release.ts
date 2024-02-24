@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 import { type PreState, type ReleasePlan } from "@changesets/types";
+import chalk from "chalk";
 import { $ } from "execa";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
@@ -10,11 +11,19 @@ const cwd = nodePath.join(__dirname, "..");
 const next = process.argv.includes("--next");
 const verbose = process.argv.includes("--verbose");
 
+const verboseBlock = ({ title, content }: { title: string; content: any }) => {
+  if (verbose) {
+    console.log(chalk.cyan.bold(`\n${title}`));
+    console.log(content);
+    console.log("\n");
+  }
+};
+
 const hasChangesets = async () => {
   const releasePlanFile = "./release-plan.json";
 
   try {
-    verbose && console.log("Getting changeset status");
+    verbose && console.log(chalk.cyan.bold("Getting changeset status"));
 
     await $({
       cwd,
@@ -26,15 +35,17 @@ const hasChangesets = async () => {
       nodeFs.readFileSync(releasePlanFile, "utf-8"),
     ) as ReleasePlan;
 
-    verbose && console.log("Release Plan");
-    verbose && console.log(JSON.stringify(releasePlan, null, 2));
-    verbose && console.log("");
+    verboseBlock({
+      title: "Release Plan",
+      content: JSON.stringify(releasePlan, null, 2),
+    });
 
     return !!releasePlan?.changesets?.length;
   } catch (error) {
-    verbose && console.log("Failed to get changeset status");
-    verbose && console.error(error);
-    verbose && console.log("");
+    verboseBlock({
+      title: "Failed to get changeset status",
+      content: error,
+    });
 
     return false;
   }
@@ -42,36 +53,36 @@ const hasChangesets = async () => {
 
 const isPreMode = () => {
   try {
-    verbose && console.log("Getting pre state");
+    verbose && console.log(chalk.cyan.bold("Getting pre state"));
 
     const preState = JSON.parse(
       nodeFs.readFileSync(".changeset/pre.json", "utf-8"),
     ) as PreState;
 
-    verbose && console.log("Pre State");
-    verbose && console.log(JSON.stringify(preState, null, 2));
-    verbose && console.log("");
+    verboseBlock({
+      title: "Pre State",
+      content: JSON.stringify(preState, null, 2),
+    });
 
     return preState?.mode === "pre";
   } catch (error) {
-    verbose && console.log("Failed to get pre state");
-    verbose && console.error(error);
-    verbose && console.log("");
+    verboseBlock({
+      title: "Failed to get pre state",
+      content: error,
+    });
 
     return false;
   }
 };
 
 (async () => {
-  if (verbose) {
-    console.log("Executing release script");
-    console.log("cwd:", cwd);
-    console.log("next:", next);
-    console.log("");
-  }
+  verboseBlock({
+    title: "Executing release script",
+    content: `cwd: ${cwd}\nnext: ${next}`,
+  });
 
   if (next && !isPreMode()) {
-    verbose && console.log("Entering pre mode");
+    verbose && console.log(chalk.cyan.bold("Entering pre mode"));
 
     await $({
       cwd,
@@ -86,7 +97,7 @@ const isPreMode = () => {
   }
 
   if (!next && isPreMode()) {
-    verbose && console.log("Exiting pre mode");
+    verbose && console.log(chalk.cyan.bold("Exiting pre mode"));
 
     await $({
       cwd,
