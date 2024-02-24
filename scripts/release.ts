@@ -1,9 +1,25 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import { $, execa } from "execa";
+import { $ } from "execa";
+import { exec } from "node:child_process";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
+
+const execPromise = (command: string) =>
+  new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        reject(new Error(stderr));
+        return;
+      }
+      resolve(stdout);
+    });
+  });
 
 const cwd = nodePath.join(__dirname, "..");
 const next = process.argv.includes("--next");
@@ -20,21 +36,10 @@ const hasChangesets = async () => {
       verbose,
     })`npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`;
     */
-
-    await execa(
-      "npx",
-      [
-        "changeset",
-        "status",
-        "--since=next",
-        "--output=./changeset-status.json",
-      ],
-      {
-        stdio: "ignore",
-        cwd,
-        verbose,
-      },
+    const stdout = await execPromise(
+      `npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`,
     );
+    console.log(stdout);
 
     const changesetStatus = JSON.parse(
       nodeFs.readFileSync(changesetFile, "utf-8"),
