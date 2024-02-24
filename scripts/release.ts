@@ -41,16 +41,15 @@ const exitPreMode = async () => {
 };
 
 (async () => {
-  console.log({ PUBLISH_TAG: process.env.PUBLISH_TAG });
-  const next = process.argv.includes("--next");
+  const isLatest = process.env.PUBLISH_TAG === "latest";
 
   process.chdir(nodePath.join(__dirname, ".."));
 
-  if (next && !(await isPreMode())) {
+  if (!isLatest && !(await isPreMode())) {
     await enterPreMode();
   }
 
-  if (!next && (await isPreMode())) {
+  if (isLatest && (await isPreMode())) {
     await exitPreMode();
   }
 

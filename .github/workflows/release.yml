@@ -1,8 +1,9 @@
-name: Release Next
+name: Release
 
 on:
   push:
     branches:
+      - main
       - next
       - test-release
 
@@ -10,7 +11,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release Next
+    name: Release
     if: github.repository == 'arsnl/dotsecret'
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +35,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release:next
+          publish: pnpm release
         env:
           PUBLISH_TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || 'next'}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
