@@ -4,11 +4,37 @@
 import { type PreState, type ReleasePlan } from "@changesets/types";
 import { $ } from "execa";
 import nodeFs from "node:fs";
+import nodeOs from "node:os";
 import nodePath from "node:path";
+
+const { NPM_TOKEN, GITHUB_TOKEN } = process.env;
+
+if (!NPM_TOKEN) {
+  console.error("NPM_TOKEN is not set");
+  process.exit(1);
+}
+if (!GITHUB_TOKEN) {
+  console.error("GITHUB_TOKEN is not set");
+  process.exit(1);
+}
 
 const cwd = nodePath.join(__dirname, "..");
 const next = process.argv.includes("--next");
 const verbose = process.argv.includes("--verbose");
+
+const createNpmrc = (token: string) => {
+  const npmrcContent = `//registry.npmjs.org/:_authToken=${token}\n`;
+  const npmrcPath = `${nodeOs.homedir()}/.npmrc`;
+
+  nodeFs.writeFileSync(npmrcPath, npmrcContent);
+
+  if (!nodeFs.existsSync(npmrcPath)) {
+    console.error("Failed to create .npmrc file");
+    process.exit(1);
+  }
+
+  verbose && console.log(`.npmrc file created at ${npmrcPath}`);
+};
 
 const hasChangesets = async () => {
   const releasePlanFile = "./release-plan.json";
@@ -56,6 +82,36 @@ const isPreMode = () => {
   }
 };
 
+const getVersion = () => {
+  verbose && console.log("Getting version");
+
+  const packageJsonPath = nodePath.join(cwd, "packages/cli/package.json");
+  const packageJson = JSON.parse(
+    nodeFs.readFileSync(packageJsonPath, "utf-8"),
+  ) as { version: string };
+
+  const version = packageJson?.version;
+  const tag = `v${version}`;
+  const releaseLine = `v${version.split(".")[0]}`;
+
+  verbose &&
+    console.log(
+      `version: ${version}, tag: ${tag}, releaseLine: ${releaseLine}`,
+    );
+
+  return { version, tag, releaseLine };
+};
+
+const bump = async () => {
+  verbose && console.log("Bumping version");
+
+  await $({
+    cwd,
+    verbose,
+    stdio: verbose ? "inherit" : undefined,
+  })`npx changeset version`;
+};
+
 (async () => {
   verbose && console.log("Executing release script");
   verbose && console.log(`cwd: ${cwd}\nnext: ${next}`);
@@ -95,9 +151,8 @@ const isPreMode = () => {
     process.exit(0);
   }
 
-  await $({
-    cwd,
-    verbose,
-    stdio: verbose ? "inherit" : undefined,
-  })`npx changeset version`;
+  await bump();
+  const version = getVersion();
+
+  createNpmrc(NPM_TOKEN);
 })();
