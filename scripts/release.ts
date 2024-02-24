@@ -54,6 +54,11 @@ const isPreMode = () => {
     console.log("");
   }
 
+  $({
+    cwd,
+    verbose,
+  })`npx --yes pokemon-cli`;
+
   if (next && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
 
