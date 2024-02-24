@@ -40,6 +40,8 @@ const hasChangesets = async ({ verbose }: { verbose: boolean }) => {
       await nodeFs.promises.readFile(releasePlanFile, "utf-8"),
     ) as ReleasePlan;
 
+    await nodeFs.promises.unlink(releasePlanFile);
+
     verbose && console.log(JSON.stringify(releasePlan, null, 2));
 
     return !!releasePlan?.changesets?.length;
@@ -91,23 +93,18 @@ const validateTag = async ({
   tag: string;
   verbose: boolean;
 }) => {
-  verbose && console.log("Validating tag");
+  try {
+    verbose && console.log("Validating tag");
 
-  const { exitCode, stderr } = await getExecOutput(
-    `git`,
-    ["ls-remote", "--exit-code", "origin", "--tags", `refs/tags/${tag}`],
-    {
-      ignoreReturnCode: true,
-    },
-  );
-  if (exitCode === 0) {
-    console.log(
-      `Action is not being published because version ${tag} is already published`,
-    );
-    process.exit(1);
-  }
-  if (exitCode !== 2) {
-    console.error(`git ls-remote exited with ${exitCode}:\n${stderr}`);
+    const { stdout } = await getExecOutput("git", ["tag", "--list", tag]);
+
+    if (stdout) {
+      console.error(`Tag ${tag} already exists`);
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error("Failed to validate tag");
+    console.error(error);
     process.exit(1);
   }
 };
@@ -182,8 +179,10 @@ const exitPreMode = async ({ verbose }: { verbose: boolean }) => {
     process.exit(0);
   }
 
-  await bump({ verbose });
-  const version = await getVersion({ verbose });
-  await validateTag({ tag: version.tag, verbose });
-  await createNpmrc({ token: NPM_TOKEN, verbose });
+  // await bump({ verbose });
+  // const version = await getVersion({ verbose });
+  // await validateTag({ tag: version.tag, verbose });
+  // await createNpmrc({ token: NPM_TOKEN, verbose });
+
+  await exec("npx", ["changeset", "publish"]);
 })();

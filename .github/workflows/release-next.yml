@@ -32,7 +32,10 @@ jobs:
         run: pnpm i
 
       - name: Publish to npm
-        run: pnpm release:next
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release:next
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
