@@ -41,6 +41,7 @@ const exitPreMode = async () => {
 };
 
 (async () => {
+  console.log({ PUBLISH_TAG: process.env.PUBLISH_TAG });
   const next = process.argv.includes("--next");
 
   process.chdir(nodePath.join(__dirname, ".."));

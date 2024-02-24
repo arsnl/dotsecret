@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - next
-      - test-release
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -17,7 +16,6 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          # check out full history
           fetch-depth: 0
 
       - name: Setup Node.js 20.x
@@ -37,5 +35,6 @@ jobs:
         with:
           publish: pnpm release:next
         env:
+          PUBLISH_TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || 'next'}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
