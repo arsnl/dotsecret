@@ -17,7 +17,7 @@ const hasChangesets = async () => {
       stdio: "ignore",
       cwd,
       verbose,
-    })`npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`;
+    })`npx changeset status`;
 
     const changesetStatus = JSON.parse(
       nodeFs.readFileSync(changesetFile, "utf-8"),
