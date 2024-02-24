@@ -10,7 +10,7 @@
     "dev:web": "turbo dev --filter=./apps/web",
     "dev:cli": "turbo dev --filter=./packages/cli",
     "release:latest": "tsx scripts/release.ts",
-    "release:next": "tsx scripts/release.ts --next",
+    "release:next": "tsx scripts/release.ts --next --verbose",
     "check": "pnpm format && turbo check",
     "fix": "prettier --write --log-level warn . && turbo fix",
     "format": "prettier --check .",

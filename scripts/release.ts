@@ -7,20 +7,30 @@ import nodePath from "node:path";
 
 const cwd = nodePath.join(__dirname, "..");
 const isNext = process.argv.includes("--next");
+const verbose = process.argv.includes("--verbose");
 
 const hasChangesets = async () => {
+  const cmd = `npx changeset status --since ${isNext ? "next" : "main"}  --output=changeset-status.json`;
+
   try {
+    verbose && console.log(`Running: ${cmd}`);
+
     await $({
       stdio: "ignore",
       cwd,
-    })`npx changeset status --since ${isNext ? "next" : "main"}  --output=changeset-status.json`;
+    })`${cmd}`;
 
     const changesetStatus = JSON.parse(
       nodeFs.readFileSync("./changeset-status.json", "utf-8"),
     ) as { changesets: any[]; releases: any[] };
 
+    verbose && console.log("Changeset status:", changesetStatus);
+
     return !!changesetStatus?.changesets?.length;
-  } catch {
+  } catch (error) {
+    verbose && console.log("Failed to get changeset status");
+    verbose && console.error(error);
+
     return false;
   }
 };
@@ -38,6 +48,12 @@ const isPreMode = () => {
 };
 
 (async () => {
+  if (verbose) {
+    console.log("Current directory:", cwd);
+    console.log("Is next:", isNext);
+    console.log("Is pre mode:", isPreMode());
+  }
+
   if (isNext && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
 
