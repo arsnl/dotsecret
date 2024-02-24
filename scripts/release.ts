@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
+import { type PreState, type ReleasePlan } from "@changesets/types";
 import { $ } from "execa";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
@@ -10,25 +11,30 @@ const next = process.argv.includes("--next");
 const verbose = process.argv.includes("--verbose");
 
 const hasChangesets = async () => {
-  const changesetFile = "./changeset-status.json";
+  const releasePlanFile = "./release-plan.json";
 
   try {
+    verbose && console.log("Getting changeset status");
+
     await $({
-      stdio: "ignore",
       cwd,
       verbose,
-    })`npx changeset status --output=${changesetFile}`;
+      stdio: verbose ? "inherit" : undefined,
+    })`npx changeset status --output=${releasePlanFile}`;
 
-    const changesetStatus = JSON.parse(
-      nodeFs.readFileSync(changesetFile, "utf-8"),
-    ) as { changesets: any[]; releases: any[] };
+    const releasePlan = JSON.parse(
+      nodeFs.readFileSync(releasePlanFile, "utf-8"),
+    ) as ReleasePlan;
 
-    verbose && console.log("Changeset status:", changesetStatus);
+    verbose && console.log("Release Plan");
+    verbose && console.log(JSON.stringify(releasePlan, null, 2));
+    verbose && console.log("");
 
-    return !!changesetStatus?.changesets?.length;
+    return !!releasePlan?.changesets?.length;
   } catch (error) {
     verbose && console.log("Failed to get changeset status");
     verbose && console.error(error);
+    verbose && console.log("");
 
     return false;
   }
@@ -36,26 +42,42 @@ const hasChangesets = async () => {
 
 const isPreMode = () => {
   try {
-    const changesetConfig = JSON.parse(
-      nodeFs.readFileSync(".changeset/pre.json", "utf-8"),
-    ) as any;
+    verbose && console.log("Getting pre state");
 
-    return changesetConfig?.mode === "pre";
-  } catch {
+    const preState = JSON.parse(
+      nodeFs.readFileSync(".changeset/pre.json", "utf-8"),
+    ) as PreState;
+
+    verbose && console.log("Pre State");
+    verbose && console.log(JSON.stringify(preState, null, 2));
+    verbose && console.log("");
+
+    return preState?.mode === "pre";
+  } catch (error) {
+    verbose && console.log("Failed to get pre state");
+    verbose && console.error(error);
+    verbose && console.log("");
+
     return false;
   }
 };
 
 (async () => {
   if (verbose) {
+    console.log("Executing release script");
     console.log("cwd:", cwd);
     console.log("next:", next);
-    console.log("pre:", isPreMode());
     console.log("");
   }
 
   if (next && !isPreMode()) {
-    await $({ cwd })`npx changeset pre enter next`;
+    verbose && console.log("Entering pre mode");
+
+    await $({
+      cwd,
+      verbose,
+      stdio: verbose ? "inherit" : undefined,
+    })`npx changeset pre enter next`;
 
     if (!isPreMode()) {
       console.error("Failed to enter pre mode");
@@ -64,7 +86,13 @@ const isPreMode = () => {
   }
 
   if (!next && isPreMode()) {
-    await $({ cwd })`npx changeset pre exit`;
+    verbose && console.log("Exiting pre mode");
+
+    await $({
+      cwd,
+      verbose,
+      stdio: verbose ? "inherit" : undefined,
+    })`npx changeset pre exit`;
 
     if (isPreMode()) {
       console.error("Failed to exit pre mode");
@@ -77,5 +105,9 @@ const isPreMode = () => {
     process.exit(0);
   }
 
-  await $({ cwd })`npx changeset version`;
+  await $({
+    cwd,
+    verbose,
+    stdio: verbose ? "inherit" : undefined,
+  })`npx changeset version`;
 })();
