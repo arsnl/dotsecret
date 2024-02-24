@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import { $ } from "execa";
+import { $, execa } from "execa";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
 
@@ -13,11 +13,28 @@ const hasChangesets = async () => {
   const changesetFile = "./changeset-status.json";
 
   try {
+    /*
     await $({
       stdio: "ignore",
       cwd,
       verbose,
     })`npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`;
+    */
+
+    await execa(
+      "npx",
+      [
+        "changeset",
+        "status",
+        "--since=next",
+        "--output=./changeset-status.json",
+      ],
+      {
+        stdio: "ignore",
+        cwd,
+        verbose,
+      },
+    );
 
     const changesetStatus = JSON.parse(
       nodeFs.readFileSync(changesetFile, "utf-8"),
