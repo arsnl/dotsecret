@@ -1,55 +1,43 @@
 #!/usr/bin/env node
+/* eslint-disable consistent-return */
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
+import { exec, getExecOutput } from "@actions/exec";
 import { type PreState, type ReleasePlan } from "@changesets/types";
-import { $ } from "execa";
 import nodeFs from "node:fs";
 import nodeOs from "node:os";
 import nodePath from "node:path";
 
-const { NPM_TOKEN, GITHUB_TOKEN } = process.env;
+const createNpmrc = async ({
+  token,
+  verbose,
+}: {
+  token: string;
+  verbose: boolean;
+}) => {
+  const content = `//registry.npmjs.org/:_authToken=${token}\n`;
+  const path = `${nodeOs.homedir()}/.npmrc`;
 
-if (!NPM_TOKEN) {
-  console.error("NPM_TOKEN is not set");
-  process.exit(1);
-}
-if (!GITHUB_TOKEN) {
-  console.error("GITHUB_TOKEN is not set");
-  process.exit(1);
-}
+  await nodeFs.promises.writeFile(path, content);
 
-const cwd = nodePath.join(__dirname, "..");
-const next = process.argv.includes("--next");
-const verbose = process.argv.includes("--verbose");
-
-const createNpmrc = (token: string) => {
-  const npmrcContent = `//registry.npmjs.org/:_authToken=${token}\n`;
-  const npmrcPath = `${nodeOs.homedir()}/.npmrc`;
-
-  nodeFs.writeFileSync(npmrcPath, npmrcContent);
-
-  if (!nodeFs.existsSync(npmrcPath)) {
+  if (!nodeFs.existsSync(path)) {
     console.error("Failed to create .npmrc file");
     process.exit(1);
   }
 
-  verbose && console.log(`.npmrc file created at ${npmrcPath}`);
+  verbose && console.log(`.npmrc file created at ${path}`);
 };
 
-const hasChangesets = async () => {
+const hasChangesets = async ({ verbose }: { verbose: boolean }) => {
   const releasePlanFile = "./release-plan.json";
 
   try {
     verbose && console.log("Getting changeset status");
 
-    await $({
-      cwd,
-      verbose,
-      stdio: verbose ? "inherit" : undefined,
-    })`npx changeset status --output=${releasePlanFile}`;
+    await exec("npx", ["changeset", "status", `--output=${releasePlanFile}`]);
 
     const releasePlan = JSON.parse(
-      nodeFs.readFileSync(releasePlanFile, "utf-8"),
+      await nodeFs.promises.readFile(releasePlanFile, "utf-8"),
     ) as ReleasePlan;
 
     verbose && console.log(JSON.stringify(releasePlan, null, 2));
@@ -63,12 +51,49 @@ const hasChangesets = async () => {
   }
 };
 
-const isPreMode = () => {
+const getVersion = async ({ verbose }: { verbose: boolean }) => {
+  try {
+    verbose && console.log("Getting version");
+
+    const packageJson = JSON.parse(
+      await nodeFs.promises.readFile("packages/cli/package.json", "utf-8"),
+    ) as { version: string };
+
+    const version = packageJson?.version;
+    const tag = `v${version}`;
+    const releaseLine = `v${version.split(".")[0]}`;
+
+    verbose &&
+      console.log(
+        `version: ${version}, tag: ${tag}, releaseLine: ${releaseLine}`,
+      );
+
+    return { version, tag, releaseLine };
+  } catch (error) {
+    console.log("Failed to get version");
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+const bump = async ({ verbose }: { verbose: boolean }) => {
+  try {
+    verbose && console.log("Bumping version");
+
+    await exec("npx", ["changeset", "version"]);
+  } catch (error) {
+    console.error("Failed to bump version");
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+const isPreMode = async ({ verbose }: { verbose: boolean }) => {
   try {
     verbose && console.log("Getting pre state");
 
     const preState = JSON.parse(
-      nodeFs.readFileSync(".changeset/pre.json", "utf-8"),
+      await nodeFs.promises.readFile(".changeset/pre.json", "utf-8"),
     ) as PreState;
 
     verbose && console.log(JSON.stringify(preState, null, 2));
@@ -82,77 +107,59 @@ const isPreMode = () => {
   }
 };
 
-const getVersion = () => {
-  verbose && console.log("Getting version");
+const enterPreMode = async ({ verbose }: { verbose: boolean }) => {
+  verbose && console.log("Entering pre mode");
 
-  const packageJsonPath = nodePath.join(cwd, "packages/cli/package.json");
-  const packageJson = JSON.parse(
-    nodeFs.readFileSync(packageJsonPath, "utf-8"),
-  ) as { version: string };
+  await exec("npx", ["changeset", "pre", "enter", "next"]);
 
-  const version = packageJson?.version;
-  const tag = `v${version}`;
-  const releaseLine = `v${version.split(".")[0]}`;
-
-  verbose &&
-    console.log(
-      `version: ${version}, tag: ${tag}, releaseLine: ${releaseLine}`,
-    );
-
-  return { version, tag, releaseLine };
+  if (!(await isPreMode({ verbose }))) {
+    console.error("Failed to enter pre mode");
+    process.exit(1);
+  }
 };
 
-const bump = async () => {
-  verbose && console.log("Bumping version");
+const exitPreMode = async ({ verbose }: { verbose: boolean }) => {
+  verbose && console.log("Exiting pre mode");
 
-  await $({
-    cwd,
-    verbose,
-    stdio: verbose ? "inherit" : undefined,
-  })`npx changeset version`;
+  await exec("npx", ["changeset", "pre", "exit"]);
+
+  if (await isPreMode({ verbose })) {
+    console.error("Failed to exit pre mode");
+    process.exit(1);
+  }
 };
 
 (async () => {
-  verbose && console.log("Executing release script");
-  verbose && console.log(`cwd: ${cwd}\nnext: ${next}`);
+  const next = process.argv.includes("--next");
+  const verbose = process.argv.includes("--verbose");
+  const { NPM_TOKEN, GITHUB_TOKEN } = process.env;
 
-  if (next && !isPreMode()) {
-    verbose && console.log("Entering pre mode");
-
-    await $({
-      cwd,
-      verbose,
-      stdio: verbose ? "inherit" : undefined,
-    })`npx changeset pre enter next`;
-
-    if (!isPreMode()) {
-      console.error("Failed to enter pre mode");
-      process.exit(1);
-    }
+  if (!NPM_TOKEN) {
+    console.error("NPM_TOKEN is not set");
+    process.exit(1);
+  }
+  if (!GITHUB_TOKEN) {
+    console.error("GITHUB_TOKEN is not set");
+    process.exit(1);
   }
 
-  if (!next && isPreMode()) {
-    verbose && console.log("Exiting pre mode");
+  process.chdir(nodePath.join(__dirname, ".."));
 
-    await $({
-      cwd,
-      verbose,
-      stdio: verbose ? "inherit" : undefined,
-    })`npx changeset pre exit`;
-
-    if (isPreMode()) {
-      console.error("Failed to exit pre mode");
-      process.exit(1);
-    }
+  if (next && !(await isPreMode({ verbose }))) {
+    await enterPreMode({ verbose });
   }
 
-  if (!(await hasChangesets())) {
+  if (!next && (await isPreMode({ verbose }))) {
+    await exitPreMode({ verbose });
+  }
+
+  if (!(await hasChangesets({ verbose }))) {
     console.error("No release needed");
     process.exit(0);
   }
 
-  await bump();
-  const version = getVersion();
+  await bump({ verbose });
+  const version = await getVersion({ verbose });
 
-  createNpmrc(NPM_TOKEN);
+  await createNpmrc({ token: NPM_TOKEN, verbose });
 })();
