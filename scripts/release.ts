@@ -37,7 +37,7 @@ const hasChangesets = async () => {
     })`npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`;
     */
     const stdout = await execPromise(
-      `npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`,
+      `npx changeset status --since=${next ? "origin/next" : "origin/main"} --output=${changesetFile}`,
     );
     console.log(stdout);
 
