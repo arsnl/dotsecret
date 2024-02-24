@@ -6,22 +6,21 @@ import nodeFs from "node:fs";
 import nodePath from "node:path";
 
 const cwd = nodePath.join(__dirname, "..");
+const changesetStatusPath = nodePath.join(cwd, "changeset-status.json");
+const changesetPrePath = nodePath.join(cwd, ".changeset/pre.json");
 const isNext = process.argv.includes("--next");
 const verbose = process.argv.includes("--verbose");
 
 const hasChangesets = async () => {
-  const cmd = `npx changeset status --since ${isNext ? "next" : "main"}  --output=changeset-status.json`;
+  const cmd = `npx changeset status --since=${isNext ? "next" : "main"}  --output=${changesetStatusPath}`;
 
   try {
     verbose && console.log(`Running: ${cmd}`);
 
-    await $({
-      stdio: "ignore",
-      cwd,
-    })`${cmd}`;
+    await $({ stdio: "ignore", cwd })`${cmd}`;
 
     const changesetStatus = JSON.parse(
-      nodeFs.readFileSync("./changeset-status.json", "utf-8"),
+      nodeFs.readFileSync(changesetStatusPath, "utf-8"),
     ) as { changesets: any[]; releases: any[] };
 
     verbose && console.log("Changeset status:", changesetStatus);
@@ -38,7 +37,7 @@ const hasChangesets = async () => {
 const isPreMode = () => {
   try {
     const changesetConfig = JSON.parse(
-      nodeFs.readFileSync("./.changeset/pre.json", "utf-8"),
+      nodeFs.readFileSync(changesetPrePath, "utf-8"),
     ) as any;
 
     return changesetConfig?.mode === "pre";
@@ -50,7 +49,9 @@ const isPreMode = () => {
 (async () => {
   if (verbose) {
     console.log("Current directory:", cwd);
+    console.log("Changeset status path:", changesetStatusPath);
     console.log("Is next:", isNext);
+    console.log("Changeset pre path:", changesetPrePath);
     console.log("Is pre mode:", isPreMode());
   }
 
