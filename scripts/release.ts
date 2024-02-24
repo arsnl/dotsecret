@@ -17,7 +17,7 @@ const hasChangesets = async () => {
       stdio: "ignore",
       cwd,
       verbose,
-    })`npx changeset status`;
+    })`npx changeset status --since=${next ? "next" : "main"} --output=${changesetFile}`;
 
     const changesetStatus = JSON.parse(
       nodeFs.readFileSync(changesetFile, "utf-8"),
@@ -53,12 +53,6 @@ const isPreMode = () => {
     console.log("pre:", isPreMode());
     console.log("");
   }
-
-  await $({
-    stdio: "inherit",
-    cwd,
-    verbose,
-  })`npx --yes pokemon-cli`;
 
   if (next && !isPreMode()) {
     await $({ cwd })`npx changeset pre enter next`;
