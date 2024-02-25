@@ -1,7 +1,7 @@
 import pkg from "@pkg";
-import boxen from "boxen";
-import chalk from "chalk";
 import { Command } from "commander";
+import boxen from "@/esm-only/boxen";
+import chalk from "@/esm-only/chalk";
 import {
   optionConfig,
   optionCwd,

@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import chalk from "@/esm-only/chalk";
 import { getCommand } from "@/services/command";
 import { getShowCommand } from "./show";
 

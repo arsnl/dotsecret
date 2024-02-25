@@ -1,9 +1,9 @@
 import pkg from "@pkg";
-import chalk from "chalk";
 import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";
 import { getBorderCharacters, table } from "table";
 import { z } from "zod";
+import chalk from "@/esm-only/chalk";
 import { getLogger } from "@/services/logger";
 
 export const SCOPES = [

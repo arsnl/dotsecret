@@ -68,15 +68,5 @@
     "tsup": "8.0.2",
     "typescript": "5.3.3",
     "yalc": "1.0.0-pre.53"
-  },
-  "bundledDependencies": [
-    "boxen",
-    "chalk",
-    "color-json",
-    "execa",
-    "find-up",
-    "globby",
-    "multimatch",
-    "ora"
-  ]
+  }
 }

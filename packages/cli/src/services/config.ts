@@ -1,8 +1,8 @@
 import { cosmiconfig } from "cosmiconfig";
-import { findUp } from "find-up";
 import { chain } from "lodash";
 import nodePath from "node:path";
 import { z } from "zod";
+import { findUp } from "@/esm-only/find-up";
 import { type CommandOptions } from "@/services/command";
 import { getIssuesCollector } from "@/services/issue";
 

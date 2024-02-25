@@ -19,6 +19,7 @@ build/
 dist/
 .astro/
 .cache/
+tsconfig.tsbuildinfo
 
 # Logs
 npm-debug.log*
