@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- [#47](https://github.com/arsnl/dotsecret/pull/47) [`5602b75`](https://github.com/arsnl/dotsecret/commit/5602b75676d692c1e332b344079cdcc4916a0bd3) Thanks [@arsnl](https://github.com/arsnl)! - Build CJS only
+
+## 0.0.0-next.6
+
+### Patch Changes
+
 - [#45](https://github.com/arsnl/dotsecret/pull/45) [`986a7cd`](https://github.com/arsnl/dotsecret/commit/986a7cda4ba3856916f801dfdb3ed088e2e8bdc8) Thanks [@arsnl](https://github.com/arsnl)! - Add LICENSE file
 
 - [#45](https://github.com/arsnl/dotsecret/pull/45) [`986a7cd`](https://github.com/arsnl/dotsecret/commit/986a7cda4ba3856916f801dfdb3ed088e2e8bdc8) Thanks [@arsnl](https://github.com/arsnl)! - Remove the "type": "commonjs" in the package.json
