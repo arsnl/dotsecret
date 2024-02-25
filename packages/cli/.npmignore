@@ -1,0 +1,8 @@
+.turbo/
+src/
+.eslintignore
+.eslintrc.cjs
+CHANGELOG.md
+reset.d.ts
+tsconfig.json
+tsup.config.ts

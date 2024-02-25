@@ -6,11 +6,8 @@ node_modules/
 .pnp.js
 
 # Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
+!.env.example
 
 # Build Outputs
 .vercel/
@@ -32,3 +29,7 @@ pnpm-debug.log*
 # Misc
 .DS_Store
 *.pem
+
+# dotsecret
+.secret*
+!.secret.config
