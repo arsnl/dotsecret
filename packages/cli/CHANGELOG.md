@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.7
+
+### Patch Changes
+
+- [#49](https://github.com/arsnl/dotsecret/pull/49) [`d9f8356`](https://github.com/arsnl/dotsecret/commit/d9f835616f0bf385762e5f17f5ac81c18d89aca8) Thanks [@arsnl](https://github.com/arsnl)! - Bump to 0.0.0-next.7
+
 ## 0.0.0-next.6
 
 ### Patch Changes
