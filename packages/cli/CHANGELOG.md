@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.3
+
+### Patch Changes
+
+- [`4057e1c`](https://github.com/arsnl/dotsecret/commit/4057e1c71f41d987094f8906510675e6e997f640) Thanks [@arsnl](https://github.com/arsnl)! - Fake changeset
+
 ## 0.0.0-next.2
 
 ### Patch Changes
