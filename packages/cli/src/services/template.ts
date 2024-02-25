@@ -1,8 +1,8 @@
-import { globby } from "globby";
-import multimatch from "multimatch";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
 import nunjucks from "nunjucks";
+import { globby } from "@/esm-only/globby";
+import multimatch from "@/esm-only/multimatch";
 import { type CommandOptions } from "@/services/command";
 import { getConfig } from "@/services/config";
 import {

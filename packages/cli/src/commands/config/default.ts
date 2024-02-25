@@ -1,4 +1,4 @@
-import colorJson from "color-json";
+import colorJson from "@/esm-only/color-json";
 import { getCommand } from "@/services/command";
 import { getDefaultConfig } from "@/services/config";
 import { getLogger } from "@/services/logger";

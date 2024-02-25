@@ -1,5 +1,5 @@
-import chalk from "chalk";
-import colorJson from "color-json";
+import chalk from "@/esm-only/chalk";
+import colorJson from "@/esm-only/color-json";
 import { getCommand } from "@/services/command";
 import { getLogger } from "@/services/logger";
 import { getStore } from "@/services/store";

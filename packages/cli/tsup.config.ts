@@ -11,6 +11,7 @@ export default defineConfig({
   format: "cjs",
   clean: true,
   // We need to include theses packages in the bundle since they are ESM only and need to be converted to CJS.
+  // Every package here need to have a bridge file in src/esm-only and a new eslint entry for the no-restricted-imports rule.
   noExternal: [
     "boxen",
     "chalk",

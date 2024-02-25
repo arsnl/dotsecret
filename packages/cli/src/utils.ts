@@ -1,8 +1,8 @@
-import { execa } from "execa";
 import stringify from "fast-json-stable-stringify";
 import yaml from "js-yaml";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
+import { execa } from "@/esm-only/execa";
 
 export function memoize<T extends (...args: any[]) => any>(fn: T) {
   const cache: Record<string, any> = {};
