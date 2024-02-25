@@ -1,22 +1,26 @@
-name: Release Next
+name: Release
 
 on:
   push:
     branches:
+      - main
       - next
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release Next
+    name: Release
+    if: github.repository == 'arsnl/dotsecret'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 20.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -26,8 +30,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
+      - name: Build CLI
+        run: pnpm build:cli
+
       - name: Publish to npm
-        run: pnpm release:next
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
         env:
+          PUBLISH_TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || 'next'}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

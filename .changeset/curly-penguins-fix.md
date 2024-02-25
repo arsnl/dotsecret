@@ -1,0 +1,5 @@
+---
+"dotsecret": patch
+---
+
+New patch

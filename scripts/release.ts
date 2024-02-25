@@ -1,62 +1,57 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import { $ } from "execa";
+import { exec } from "@actions/exec";
+import { type PreState } from "@changesets/types";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
 
-const cwd = nodePath.join(__dirname, "..");
-
-const hasChangesets = async () => {
+const isPreMode = async () => {
   try {
-    await $({ stdio: "ignore", cwd })`npx changeset status`;
-    return true;
+    const preState = JSON.parse(
+      await nodeFs.promises.readFile(".changeset/pre.json", "utf-8"),
+    ) as PreState;
+
+    return preState?.mode === "pre";
   } catch {
     return false;
   }
 };
 
-const isPreMode = () => {
-  try {
-    const changesetConfig = JSON.parse(
-      nodeFs.readFileSync("./.changeset/pre.json", "utf-8"),
-    ) as any;
+const enterPreMode = async () => {
+  console.log("Entering pre mode");
 
-    return changesetConfig?.mode === "pre";
-  } catch {
-    return false;
+  await exec("npx", ["changeset", "pre", "enter", "next"]);
+
+  if (!(await isPreMode())) {
+    console.error("Failed to enter pre mode");
+    process.exit(1);
+  }
+};
+
+const exitPreMode = async () => {
+  console.log("Exiting pre mode");
+
+  await exec("npx", ["changeset", "pre", "exit"]);
+
+  if (await isPreMode()) {
+    console.error("Failed to exit pre mode");
+    process.exit(1);
   }
 };
 
 (async () => {
-  const isNext = process.argv.includes("--next");
+  const isLatest = process.env.PUBLISH_TAG === "latest";
 
-  await $({ cwd, stdio: "inherit" })`ls .changeset`;
+  process.chdir(nodePath.join(__dirname, ".."));
 
-  if (isNext && !isPreMode()) {
-    await $({ cwd })`npx changeset pre enter next`;
-
-    if (!isPreMode()) {
-      console.error("Failed to enter pre mode");
-      process.exit(1);
-    }
+  if (!isLatest && !(await isPreMode())) {
+    await enterPreMode();
   }
 
-  if (!isNext && isPreMode()) {
-    await $({ cwd })`npx changeset pre exit`;
-
-    if (isPreMode()) {
-      console.error("Failed to exit pre mode");
-      process.exit(1);
-    }
+  if (isLatest && (await isPreMode())) {
+    await exitPreMode();
   }
 
-  await $({ cwd, stdio: "inherit" })`ls .changeset`;
-
-  if (!(await hasChangesets())) {
-    console.log("No changeset found. No release needed.");
-    process.exit(0);
-  }
-
-  await $({ cwd })`npx changeset version`;
+  await exec("npx", ["changeset", "publish"]);
 })();
