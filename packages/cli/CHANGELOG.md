@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.8
+
+### Patch Changes
+
+- [#51](https://github.com/arsnl/dotsecret/pull/51) [`fff727b`](https://github.com/arsnl/dotsecret/commit/fff727bfbfcff97a60e8a43539344ab0a7b74a55) Thanks [@arsnl](https://github.com/arsnl)! - Move ESM only packages into bridge files
+
 ## 0.0.0-next.7
 
 ### Patch Changes
