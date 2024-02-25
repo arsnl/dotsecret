@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.5
+
+### Patch Changes
+
+- [#43](https://github.com/arsnl/dotsecret/pull/43) [`17188ca`](https://github.com/arsnl/dotsecret/commit/17188ca60507b0f16fc455c74dd2362aed25d3a3) Thanks [@arsnl](https://github.com/arsnl)! - Apply publint fixes
+
 ## 0.0.0-next.4
 
 ### Patch Changes
