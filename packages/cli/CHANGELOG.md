@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.4
+
+### Patch Changes
+
+- [#41](https://github.com/arsnl/dotsecret/pull/41) [`c3fdc1b`](https://github.com/arsnl/dotsecret/commit/c3fdc1ba40c6dd1d027f7b662bfafc87863d1146) Thanks [@arsnl](https://github.com/arsnl)! - Add fixes from publint
+
 ## 0.0.0-next.3
 
 ### Patch Changes
