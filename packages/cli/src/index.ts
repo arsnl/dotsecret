@@ -1,7 +1,3 @@
-import { getCommand } from "@/services/command";
+// TODO: This file should expose the public API of the dotsecret package that can be used by other node packages and projects without having to use the CLI.
 
-export const cli = () => {
-  console.log("cli");
-};
-
-export { getCommand };
+export const todo = () => "TODO";

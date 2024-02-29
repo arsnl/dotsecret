@@ -127,6 +127,44 @@ export const writeYamlFile = async <T>(
   }
 };
 
+export const readJsonFile = async <T>(path: string) => {
+  const absolutePath = getAbsolutePath(path);
+  const fileContent = await getFileContent(absolutePath);
+
+  if (!fileContent) {
+    return null;
+  }
+
+  try {
+    const fileContentParsed = JSON.parse(fileContent) as T;
+    return fileContentParsed;
+  } catch {
+    return null;
+  }
+};
+
+export const writeJsonFile = async <T>(
+  path: string,
+  content: T,
+  options: nodeFs.ObjectEncodingOptions & {
+    mode?: nodeFs.Mode | undefined;
+    flag?: nodeFs.OpenMode | undefined;
+  } = {},
+) => {
+  const absolutePath = getAbsolutePath(path);
+
+  try {
+    const fileContent = JSON.stringify(content, null, 2);
+    await nodeFs.promises.writeFile(absolutePath, fileContent, {
+      encoding: "utf-8",
+      ...options,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const isPathWriteable = async (path: string) => {
   const absolutePath = getAbsolutePath(path);
 

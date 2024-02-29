@@ -2,22 +2,12 @@ import pkg from "@pkg";
 import { Command } from "commander";
 import boxen from "@/esm-only/boxen";
 import chalk from "@/esm-only/chalk";
-import {
-  optionConfig,
-  optionCwd,
-  optionDryRun,
-  optionForce,
-  optionLogLevel,
-  optionTokensNameId,
-  type ParsedOptionConfig,
-  type ParsedOptionCwd,
-  type ParsedOptionDryRun,
-  type ParsedOptionForce,
-  type ParsedOptionLogLevel,
-  type ParsedOptionTokensNameId,
-} from "@/services/argument";
+import * as argument from "./_argument";
+import type * as Argument from "./_argument";
 
-const BANNER = `${chalk.bold("Vaulty")} — ${pkg.description}
+export { Argument, argument };
+
+const BANNER = `${chalk.bold("Dotsecret")} — ${pkg.description}
   
 Version: ${pkg.version}
 `;
@@ -41,17 +31,17 @@ type CommandOptionsConfig = {
 
 export type CommandOptions<T = {}> = {
   /** The path to the configuration file. */
-  config?: ParsedOptionConfig;
+  config?: Argument.ParsedOptionConfig;
   /** Whether to show what would be done without actually doing it. */
-  dryRun: ParsedOptionDryRun;
+  dryRun: Argument.ParsedOptionDryRun;
   /** The log level. */
-  logLevel: ParsedOptionLogLevel;
+  logLevel: Argument.ParsedOptionLogLevel;
   /** Whether to override safety checks and force operations to complete. */
-  force: ParsedOptionForce;
+  force: Argument.ParsedOptionForce;
   /** The current working directory. */
-  cwd: ParsedOptionCwd;
+  cwd: Argument.ParsedOptionCwd;
   /** The tokens to use. */
-  tokens: ParsedOptionTokensNameId;
+  tokens: Argument.ParsedOptionTokensNameId;
 } & T;
 
 type CommandCommandsConfig = {
@@ -117,6 +107,7 @@ export const getCommand = ({
     : command.description(`Description: ${summary}.`);
 
   // Let the command pass through global options to subcommands.
+  command.enablePositionalOptions();
   command.passThroughOptions();
 
   // Allow unknown options to be passed to subcommands.
@@ -125,16 +116,16 @@ export const getCommand = ({
   commandOptions.help &&
     command.helpOption("-h, --help", "Display help for command");
 
-  commandOptions.config && command.addOption(optionConfig);
-  commandOptions.logLevel && command.addOption(optionLogLevel);
-  commandOptions.cwd && command.addOption(optionCwd);
-  commandOptions.force && command.addOption(optionForce);
-  commandOptions.dryRun && command.addOption(optionDryRun);
-  commandOptions.tokens && command.addOption(optionTokensNameId);
+  commandOptions.config && command.addOption(argument.optionConfig);
+  commandOptions.logLevel && command.addOption(argument.optionLogLevel);
+  commandOptions.cwd && command.addOption(argument.optionCwd);
+  commandOptions.force && command.addOption(argument.optionForce);
+  commandOptions.dryRun && command.addOption(argument.optionDryRun);
+  commandOptions.tokens && command.addOption(argument.optionTokensNameId);
 
   commandCommands.help
-    ? command.addHelpCommand("help [command]", "Display help for a command")
-    : command.addHelpCommand(false);
+    ? command.helpCommand("help [command]", "Display help for a command")
+    : command.helpCommand(false);
 
   return command;
 };

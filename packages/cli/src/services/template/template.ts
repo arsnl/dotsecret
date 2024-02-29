@@ -5,6 +5,15 @@ import { globby } from "@/esm-only/globby";
 import multimatch from "@/esm-only/multimatch";
 import { type CommandOptions } from "@/services/command";
 import { getConfig } from "@/services/config";
+import { getIssuesCollector } from "@/services/issue";
+import { getLocalSecrets } from "@/services/secret";
+import {
+  getFileLastUpdate,
+  isFileExists,
+  isInGitRepository as isInGitRepo,
+  isPathIgnoredByGit,
+  isPathWriteable,
+} from "@/utils";
 import {
   filterBase64decode,
   filterBase64encode,
@@ -17,16 +26,7 @@ import {
   filterJson,
   filterKeyValue,
   filterYaml,
-} from "@/services/filter";
-import { getIssuesCollector } from "@/services/issue";
-import { getSecrets } from "@/services/secret";
-import {
-  getFileLastUpdate,
-  isFileExists,
-  isInGitRepository as isInGitRepo,
-  isPathIgnoredByGit,
-  isPathWriteable,
-} from "@/utils";
+} from "./_filter";
 
 let GLOBAL_ENGINE: nunjucks.Environment;
 let GLOBAL_DATA: any;
@@ -53,11 +53,11 @@ export const getTemplate = async ({
   options: CommandOptions;
   template: string;
 }): Promise<Template> => {
-  const { extension, project } = await getConfig({ options });
-  const output = template.replace(extension, "");
-  const templatePath = nodePath.join(project, template);
+  const { projectRoot } = await getConfig({ options });
+  const output = template.replace(".secret", "");
+  const templatePath = nodePath.join(projectRoot, template);
   const templateExists = await isFileExists(templatePath);
-  const outputPath = nodePath.join(project, output);
+  const outputPath = nodePath.join(projectRoot, output);
   const lastUpdate = (await getFileLastUpdate(templatePath)) || new Date();
   const lastOutput = await getFileLastUpdate(outputPath);
   const hasWriteAccess = await isPathWriteable(outputPath);
@@ -131,12 +131,12 @@ export const getTemplates = async ({
   options: CommandOptions;
   templates?: string[];
 }): Promise<Templates> => {
-  const { extension, gitignore, ignoreFiles, project } = await getConfig({
+  const { gitignore, ignoreFiles, projectRoot } = await getConfig({
     options,
   });
 
-  const templatesFound = await globby([`**/*${extension}`], {
-    cwd: project,
+  const templatesFound = await globby([`**/*.secret`], {
+    cwd: projectRoot,
     gitignore,
     ignoreFiles,
     dot: true,
@@ -169,10 +169,10 @@ export const getTemplateEngine = async ({
     return GLOBAL_ENGINE;
   }
 
-  const { project } = await getConfig({ options });
+  const { projectRoot } = await getConfig({ options });
 
   GLOBAL_ENGINE = new nunjucks.Environment(
-    new nunjucks.FileSystemLoader(project),
+    new nunjucks.FileSystemLoader(projectRoot),
     { autoescape: false },
   );
 
@@ -211,13 +211,7 @@ export const getTemplateData = async ({
     return { ...GLOBAL_DATA };
   }
 
-  const secrets = (await getSecrets({ options })).reduce(
-    (data, secret) => ({
-      ...data,
-      [secret.key]: secret.data,
-    }),
-    {},
-  );
+  const secrets = await getLocalSecrets({ options });
 
   GLOBAL_DATA = {
     secrets,
@@ -257,9 +251,9 @@ export const deleteTemplateOutput = async ({
   options: CommandOptions;
   template: string;
 }) => {
-  const { project } = await getConfig({ options });
+  const { projectRoot } = await getConfig({ options });
   const { output } = await getTemplate({ options, template });
-  const outputPath = nodePath.join(project, output);
+  const outputPath = nodePath.join(projectRoot, output);
   const issuesCollector = getIssuesCollector({
     scope: "template",
     source: template,

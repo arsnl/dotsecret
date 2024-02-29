@@ -242,7 +242,7 @@ export const getIssuesCollector = (
         msgColor(
           `⚒ ${counts.fixes} fix${
             counts.fixes > 1 ? "es" : ""
-          } available with "${chalk.italic("vaulty audit fix")}"`,
+          } available with "${chalk.italic("dotsecret fix")}"`,
         ),
       );
 
