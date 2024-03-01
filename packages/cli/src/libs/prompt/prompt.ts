@@ -1,7 +1,7 @@
 import _prompts from "prompts";
-import boxen from "@/esm-only/boxen";
-import chalk from "@/esm-only/chalk";
-import { getLogger } from "@/services/logger";
+import { getLogger } from "@/libs/logger";
+import boxen from "@/vendors/boxen";
+import chalk from "@/vendors/chalk";
 
 const handlePromptCancel = () => {
   const { logger } = getLogger();

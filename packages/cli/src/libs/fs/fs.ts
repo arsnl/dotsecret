@@ -1,19 +1,7 @@
-import stringify from "fast-json-stable-stringify";
 import yaml from "js-yaml";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
-import { execa } from "@/esm-only/execa";
-
-export function memoize<T extends (...args: any[]) => any>(fn: T) {
-  const cache: Record<string, any> = {};
-
-  // eslint-disable-next-line func-names -- need to support the async functions. no impact on the sync functions.
-  return async function (this: any, ...args: any[]) {
-    const key = stringify(args);
-    cache[key] = cache[key] || fn.apply(this, args);
-    return cache[key];
-  } as T;
-}
+import { execa } from "@/vendors/execa";
 
 export const getAbsolutePath = (path: string) =>
   nodePath.isAbsolute(path) ? path : nodePath.resolve(path);

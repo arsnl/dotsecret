@@ -1,9 +1,9 @@
 import dotenv, { type DotenvConfigOutput } from "dotenv";
 import nodePath from "node:path";
-import { type CommandOptions } from "@/services/command";
-import { getConfig } from "@/services/config";
-import { getIssuesCollector } from "@/services/issue";
-import { isFileExists } from "@/utils";
+import { type CommandOptions } from "@/libs/command";
+import { getConfig } from "@/libs/config";
+import { isFileExists } from "@/libs/fs";
+import { getIssuesCollector } from "@/libs/issue";
 
 export const getLocalSecrets = async ({
   options,

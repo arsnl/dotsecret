@@ -3,8 +3,8 @@ import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";
 import { getBorderCharacters, table } from "table";
 import { z } from "zod";
-import chalk from "@/esm-only/chalk";
-import { getLogger } from "@/services/logger";
+import { getLogger } from "@/libs/logger";
+import chalk from "@/vendors/chalk";
 
 export const SCOPES = [
   "store",

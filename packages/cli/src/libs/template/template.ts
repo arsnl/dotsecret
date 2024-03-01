@@ -1,35 +1,124 @@
+import dayjs from "dayjs";
+import yaml from "js-yaml";
+import nodeCrypto from "node:crypto";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
 import nunjucks from "nunjucks";
-import { globby } from "@/esm-only/globby";
-import multimatch from "@/esm-only/multimatch";
-import { type CommandOptions } from "@/services/command";
-import { getConfig } from "@/services/config";
-import { getIssuesCollector } from "@/services/issue";
-import { getLocalSecrets } from "@/services/secret";
+import { type CommandOptions } from "@/libs/command";
+import { getConfig } from "@/libs/config";
 import {
   getFileLastUpdate,
   isFileExists,
   isInGitRepository as isInGitRepo,
   isPathIgnoredByGit,
   isPathWriteable,
-} from "@/utils";
-import {
-  filterBase64decode,
-  filterBase64encode,
-  filterDecodeURIComponent,
-  filterDecrypt,
-  filterEncodeURIComponent,
-  filterEncrypt,
-  filterFormatDate,
-  filterHash,
-  filterJson,
-  filterKeyValue,
-  filterYaml,
-} from "./_filter";
+} from "@/libs/fs";
+import { getIssuesCollector } from "@/libs/issue";
+import { getLocalSecrets } from "@/libs/secret";
+import { globby } from "@/vendors/globby";
+import multimatch from "@/vendors/multimatch";
 
 let GLOBAL_ENGINE: nunjucks.Environment;
 let GLOBAL_DATA: any;
+
+/**
+ * Encodes a text string as a valid component of a Uniform Resource Identifier (URI)
+ */
+const filterEncodeURIComponent = (val: string) => encodeURIComponent(val);
+
+/**
+ * Gets the unencoded version of an encoded component of a Uniform Resource Identifier (URI).
+ */
+const filterDecodeURIComponent = (val: string) => decodeURIComponent(val);
+
+/**
+ * Encode a string to base64
+ */
+const filterBase64encode = (val: string) =>
+  Buffer.from(val, "utf8").toString("base64");
+
+/**
+ * Decode a base64 string
+ */
+const filterBase64decode = (val: string) =>
+  Buffer.from(val, "base64").toString("utf8");
+
+/**
+ * Hashes a string using the specified algorithm.
+ */
+const filterHash = (val: string, algorithm: string = "sha256") => {
+  const hash = nodeCrypto.createHash(algorithm);
+  hash.update(val);
+  return hash.digest("hex");
+};
+
+/**
+ * Encrypt a string using the specified algorithm.
+ */
+const filterEncrypt = (
+  val: string,
+  {
+    secret = "",
+    iv = "0123456789abcdef0123456789abcdef",
+    algorithm = "aes-256-cbc",
+  }: { secret?: string; iv?: string; algorithm?: string } = {},
+) => {
+  const cipher = nodeCrypto.createCipheriv(
+    algorithm,
+    nodeCrypto.createHash("sha256").update(secret).digest(),
+    Buffer.from(iv, "hex"),
+  );
+  let encrypted = cipher.update(val, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+};
+
+/**
+ * Decrypt a string using the specified algorithm.
+ */
+const filterDecrypt = (
+  val: string,
+  {
+    secret = "",
+    iv = "0123456789abcdef0123456789abcdef",
+    algorithm = "aes-256-cbc",
+  }: { secret?: string; iv?: string; algorithm?: string } = {},
+) => {
+  const decipher = nodeCrypto.createDecipheriv(
+    algorithm,
+    nodeCrypto.createHash("sha256").update(secret).digest(),
+    Buffer.from(iv, "hex"),
+  );
+  let decrypted = decipher.update(val, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+};
+
+/**
+ * Get the formatted date according to the string of tokens passed in.
+ */
+const filterFormatDate = (
+  val: string | number | Date,
+  format: string = "YYYY-MM-DD HH:mm:ss",
+) => dayjs(val).format(format);
+
+/**
+ * Converts a JavaScript value to a JSON string.
+ */
+const filterJson = (val: any, indent = 2) => JSON.stringify(val, null, indent);
+
+/**
+ * Convert a JSON to key=value
+ */
+const filterKeyValue = (val: object) =>
+  Object.entries(val)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n");
+
+/**
+ * Converts a JSON to YAML.
+ */
+const filterYaml = (val: any) => yaml.dump(val);
 
 export type Template = {
   /** The template path in the project. */

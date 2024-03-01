@@ -1,9 +1,9 @@
 import nodePath from "node:path";
 import { z } from "zod";
-import { findUp } from "@/esm-only/find-up";
-import { type CommandOptions } from "@/services/command";
-import { getIssuesCollector } from "@/services/issue";
-import { readJsonFile } from "@/utils";
+import { type CommandOptions } from "@/libs/command";
+import { readJsonFile } from "@/libs/fs";
+import { getIssuesCollector } from "@/libs/issue";
+import { findUp } from "@/vendors/find-up";
 
 const GitIgnorechema = z.coerce
   .boolean()

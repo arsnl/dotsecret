@@ -8,35 +8,35 @@ module.exports = {
       "error",
       {
         name: "boxen",
-        message: "Please use @/esm-only/boxen instead.",
+        message: "Please use @/vendors/boxen instead.",
       },
       {
         name: "chalk",
-        message: "Please use @/esm-only/chalk instead.",
+        message: "Please use @/vendors/chalk instead.",
       },
       {
         name: "color-json",
-        message: "Please use @/esm-only/color-json instead.",
+        message: "Please use @/vendors/color-json instead.",
       },
       {
         name: "execa",
-        message: "Please use @/esm-only/execa instead.",
+        message: "Please use @/vendors/execa instead.",
       },
       {
         name: "find-up",
-        message: "Please use @/esm-only/find-up instead.",
+        message: "Please use @/vendors/find-up instead.",
       },
       {
         name: "globby",
-        message: "Please use @/esm-only/globby instead.",
+        message: "Please use @/vendors/globby instead.",
       },
       {
         name: "multimatch",
-        message: "Please use @/esm-only/multimatch instead.",
+        message: "Please use @/vendors/multimatch instead.",
       },
       {
         name: "ora",
-        message: "Please use @/esm-only/ora instead.",
+        message: "Please use @/vendors/ora instead.",
       },
     ],
   },

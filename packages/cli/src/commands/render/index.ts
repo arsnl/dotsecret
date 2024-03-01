@@ -1,11 +1,11 @@
-import chalk from "@/esm-only/chalk";
 import {
-  type Argument,
-  argument,
+  argumentTemplates,
   type CommandOptions,
   getCommand,
-} from "@/services/command";
-import { getLogger } from "@/services/logger";
+  type ParsedArgumentTemplates,
+} from "@/libs/command";
+import { getLogger } from "@/libs/logger";
+import chalk from "@/vendors/chalk";
 
 const summary = `Render the template files`;
 const description = `You can optionnaly specify glob patterns to filter the template files to render. If you do, note that you need to use single quotes around the glob patterns to avoid your shell to interpret them.
@@ -32,9 +32,9 @@ export const getRenderCommand = async () => {
     },
   });
 
-  command.addArgument(argument.argumentTemplates);
+  command.addArgument(argumentTemplates);
 
-  command.action<[Argument.ParsedArgumentTemplates, CommandOptions]>(
+  command.action<[ParsedArgumentTemplates, CommandOptions]>(
     async (_templatesArg, options) => {
       // const { dryRun } = options;
       const { logger } = getLogger({ options });
