@@ -8,35 +8,43 @@ module.exports = {
       "error",
       {
         name: "boxen",
-        message: "Please use @/vendors/boxen instead.",
+        message:
+          'Please use `const { default: boxen } = await import("boxen");` instead.',
       },
       {
         name: "chalk",
-        message: "Please use @/vendors/chalk instead.",
+        message:
+          'Please use `const { default: chalk } = await import("chalk");` instead.',
       },
       {
         name: "color-json",
-        message: "Please use @/vendors/color-json instead.",
+        message:
+          'Please use `const { default: colorJson } = await import("color-json");` instead.',
       },
       {
         name: "execa",
-        message: "Please use @/vendors/execa instead.",
+        message:
+          'Please use `const { execa, $ } = await import("execa");` instead.',
       },
       {
         name: "find-up",
-        message: "Please use @/vendors/find-up instead.",
+        message:
+          'Please use `const { findUp } = await import("find-up");` instead.',
       },
       {
         name: "globby",
-        message: "Please use @/vendors/globby instead.",
+        message:
+          'Please use `const { globby } = await import("globby");` instead.',
       },
       {
         name: "multimatch",
-        message: "Please use @/vendors/multimatch instead.",
+        message:
+          'Please use `const { default: multimatch } = await import("multimatch");` instead.',
       },
       {
         name: "ora",
-        message: "Please use @/vendors/ora instead.",
+        message:
+          'Please use `const { default: ora } = await import("ora");` instead.',
       },
     ],
   },

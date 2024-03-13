@@ -32,5 +32,6 @@ pnpm-debug.log*
 *.pem
 
 # dotsecret
-.secret*
-!.secret.config
+.secret
+.secret.me
+.secret.previous
