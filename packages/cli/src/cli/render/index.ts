@@ -1,9 +1,5 @@
-import {
-  argumentTemplates,
-  type CommandOptions,
-  getCommand,
-  type ParsedArgumentTemplates,
-} from "@/lib/command";
+import { type ArgumentTemplates, argumentTemplates } from "@/lib/cli/argument";
+import { type CommandOptions, getCommand } from "@/lib/cli/command";
 import { getConfig } from "@/lib/config";
 import { getLogger } from "@/lib/logger";
 import { getTemplates } from "@/lib/template";
@@ -39,7 +35,7 @@ export const getRenderCommand = async () => {
 
   command.addArgument(argumentTemplates);
 
-  command.action<[ParsedArgumentTemplates, CommandOptions]>(
+  command.action<[ArgumentTemplates, CommandOptions]>(
     async (_templatesArg, options) => {
       // const { dryRun } = options;
 

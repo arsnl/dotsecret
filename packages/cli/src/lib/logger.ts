@@ -1,5 +1,5 @@
 /* eslint-disable no-console -- Only place in the CLI where the no-console should be accepted */
-import { type CommandOptions } from "@/lib/command";
+import { type CommandOptions } from "@/lib/cli/command";
 
 export const LOG_LEVELS = ["error", "warn", "info", "debug"] as const;
 
