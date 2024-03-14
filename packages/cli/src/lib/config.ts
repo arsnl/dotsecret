@@ -46,7 +46,7 @@ export type GetConfigOptions = {
  *
  * @param cwd The current working directory. Defaults to `process.cwd()`.
  * @param file The path to the configuration file to load. If not provided, the configuration will be searched.
- * @returns The dotsecret configuration if found, `undefined` otherwise.
+ * @returns The dotsecret configuration if found, undefined otherwise.
  */
 export const getConfig = async ({
   cwd = process.cwd(),
@@ -67,7 +67,7 @@ export const getConfig = async ({
     stopDir: nodePath.parse(cwd).root,
   });
 
-  const fileExists = file && isFileExists(getAbsolutePath(file));
+  const fileExists = file && isFileExists(getAbsolutePath(file, cwd));
   if (file && !fileExists) {
     issues.add({
       message: `Configuration file not found: ${file}`,
@@ -76,7 +76,9 @@ export const getConfig = async ({
     return undefined;
   }
 
-  const result = file ? await explorer.load(file) : await explorer.search(cwd);
+  const result = file
+    ? await explorer.load(getAbsolutePath(file, cwd))
+    : await explorer.search(cwd);
   const config = result?.filepath;
 
   if (!config) {

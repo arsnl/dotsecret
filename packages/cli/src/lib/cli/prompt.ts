@@ -21,7 +21,7 @@ export const prompt = (...args: Parameters<typeof _prompts>) => {
   );
 };
 
-export const confirm = async ({
+export const promptConfirm = async ({
   message,
   initial = false,
 }: {
@@ -38,7 +38,7 @@ export const confirm = async ({
   return confirmed;
 };
 
-export const confirmOrAbort = async (message: string) => {
+export const promptConfirmOrAbort = async (message: string) => {
   const { default: chalk } = await import("chalk");
   const { default: boxen } = await import("boxen");
   const { logger } = getLogger();
@@ -53,7 +53,7 @@ export const confirmOrAbort = async (message: string) => {
     }),
   );
 
-  const saidYes = await confirm({ message: "Do you want to continue?" });
+  const saidYes = await promptConfirm({ message: "Do you want to continue?" });
 
   if (!saidYes) {
     logger.info(`${chalk.red("✖")} Aborded`);

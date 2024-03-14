@@ -2,26 +2,22 @@ import pkg from "@pkg";
 import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";
 import { getBorderCharacters, table } from "table";
-import { z } from "zod";
 import { getLogger } from "@/lib/logger";
 
-export const IssueSchema = z
-  .object({
-    /** The issue id. */
-    id: z.string().describe("The issue id."),
-    /** The severity of the issue. */
-    severity: z.enum(["warn", "error"]).describe("The severity of the issue."),
-    /** The issue message. */
-    message: z.string().describe("The issue message."),
-    /** The function to fix the issue */
-    fix: z.function().optional().describe("The function to fix the issue."),
-  })
-  .describe("An issue.");
-
-export type Issue = z.infer<typeof IssueSchema>;
-
 // The issue store used during the execution.
-const GLOBAL_ISSUES: Issue[] = [];
+const ISSUES: Issue[] = [];
+
+/** An issue. */
+export type Issue = {
+  /** The issue id. */
+  id: string;
+  /** The severity of the issue. */
+  severity: "warn" | "error";
+  /** The issue message. */
+  message: string;
+  /** The function to fix the issue */
+  fix?: () => Promise<void>;
+};
 
 type IssueInputs = Partial<Omit<Issue, "id">>;
 
@@ -31,6 +27,7 @@ type IssuesFilters = {
   severity?: Issue["severity"] | Issue["severity"][];
 };
 
+/** The issue collector. */
 export const issues = {
   /** Generate an issue without adding it to the collector. */
   gen: (issue: IssueInputs): Issue => {
@@ -58,8 +55,8 @@ export const issues = {
   add: (issue: IssueInputs) => {
     const issueData = issues.gen(issue);
 
-    if (!GLOBAL_ISSUES.find(({ id }) => id === issueData.id)) {
-      GLOBAL_ISSUES.push(issueData);
+    if (!ISSUES.find(({ id }) => id === issueData.id)) {
+      ISSUES.push(issueData);
     }
 
     return issues;
@@ -73,6 +70,32 @@ export const issues = {
     });
 
     return issues;
+  },
+
+  /** Return the issues. */
+  get: ({ severity }: IssuesFilters = {}) => {
+    const severities = (Array.isArray(severity) ? severity : [severity]).filter(
+      Boolean,
+    );
+
+    return ISSUES.filter(
+      ({ severity: issueSeverity }) =>
+        !severities.length || severities.includes(issueSeverity),
+    );
+  },
+
+  /** Return the issues counts. */
+  counts: (filters: IssuesFilters = {}) => {
+    const filteredIssues = issues.get(filters);
+
+    return {
+      total: filteredIssues.length,
+      errors: filteredIssues.filter(({ severity }) => severity === "error")
+        .length,
+      warnings: filteredIssues.filter(({ severity }) => severity === "warn")
+        .length,
+      fixes: filteredIssues.filter(({ fix }) => !!fix).length,
+    };
   },
 
   /** Print the issues. */
@@ -148,31 +171,5 @@ export const issues = {
     }
 
     return issues;
-  },
-
-  /** Return the issues counts. */
-  counts: (filters: IssuesFilters = {}) => {
-    const filteredIssues = issues.get(filters);
-
-    return {
-      total: filteredIssues.length,
-      errors: filteredIssues.filter(({ severity }) => severity === "error")
-        .length,
-      warnings: filteredIssues.filter(({ severity }) => severity === "warn")
-        .length,
-      fixes: filteredIssues.filter(({ fix }) => !!fix).length,
-    };
-  },
-
-  /** Return the issues. */
-  get: ({ severity }: IssuesFilters = {}) => {
-    const severities = (Array.isArray(severity) ? severity : [severity]).filter(
-      Boolean,
-    );
-
-    return GLOBAL_ISSUES.filter(
-      ({ severity: issueSeverity }) =>
-        !severities.length || severities.includes(issueSeverity),
-    );
   },
 };

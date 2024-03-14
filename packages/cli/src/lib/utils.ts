@@ -1,4 +1,3 @@
-import yaml from "js-yaml";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
 
@@ -6,10 +5,11 @@ import nodePath from "node:path";
  * Get the absolute path of a given path
  *
  * @param path The path to get the absolute path of
+ * @param cwd The current working directory. Default: process.cwd()
  * @returns The absolute path
  */
-export const getAbsolutePath = (path: string) =>
-  nodePath.isAbsolute(path) ? path : nodePath.resolve(path);
+export const getAbsolutePath = (path: string, cwd = process.cwd()) =>
+  nodePath.isAbsolute(path) ? path : nodePath.resolve(cwd, path);
 
 /**
  * Check if the path exists
@@ -116,58 +116,6 @@ export const setFilePermissions = async (
 
   try {
     await nodeFs.promises.chmod(absolutePath, mode);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-/**
- * Reac a YAML file
- *
- * @param path The path of the file to read
- * @returns The content of the file as a JSON, or undefined if the file does not exist
- */
-export const readYamlFile = async <T>(path: string) => {
-  const absolutePath = getAbsolutePath(path);
-  const fileContent = await getFileContent(absolutePath);
-
-  if (!fileContent) {
-    return undefined;
-  }
-
-  try {
-    const fileContentParsed = yaml.load(fileContent) as T;
-    return fileContentParsed;
-  } catch {
-    return undefined;
-  }
-};
-
-/**
- * Write a YAML file
- *
- * @param path The path of the file to write
- * @param content The content to write
- * @param options The options to write the file
- * @returns true if the file was written, false otherwise
- */
-export const writeYamlFile = async <T>(
-  path: string,
-  content: T,
-  options: nodeFs.ObjectEncodingOptions & {
-    mode?: nodeFs.Mode | undefined;
-    flag?: nodeFs.OpenMode | undefined;
-  } = {},
-) => {
-  const absolutePath = getAbsolutePath(path);
-
-  try {
-    const fileContent = yaml.dump(content, { lineWidth: -1 });
-    await nodeFs.promises.writeFile(absolutePath, fileContent, {
-      encoding: "utf-8",
-      ...options,
-    });
     return true;
   } catch {
     return false;
