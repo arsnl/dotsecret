@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from "tsup";
 
-export default defineConfig({
+export default defineConfig((options) => ({
   name: "dotsecret",
   target: "node16",
   entry: ["src/index.ts", "src/cli/index.ts"],
@@ -10,4 +10,5 @@ export default defineConfig({
   sourcemap: false,
   format: "cjs",
   clean: true,
-});
+  minify: options.watch ? false : "terser",
+}));

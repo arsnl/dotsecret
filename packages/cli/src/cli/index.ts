@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import pkg from "@pkg";
 import { getRenderCommand } from "@/cli/render";
 import { getCommand } from "@/lib/cli/command";
 import { issues } from "@/lib/issue";
+import pkg from "@/lib/package-json";
 
 const description = `Dotsecret is designed to simplify the process of fetching secrets from secrets managers and render files with them.
 

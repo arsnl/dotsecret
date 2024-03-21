@@ -1,5 +1,5 @@
-import pkg from "@pkg";
 import { Command } from "commander";
+import pkg from "@/lib/package-json";
 import {
   type OptionConfig,
   optionConfig,
@@ -119,7 +119,7 @@ Version: ${pkg.version}
           {
             padding: { left: 2 },
             borderStyle: "none",
-            width: 80,
+            width: 120,
           },
         )}`,
       )

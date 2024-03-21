@@ -1,8 +1,8 @@
-import pkg from "@pkg";
 import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";
 import { getBorderCharacters, table } from "table";
 import { getLogger } from "@/lib/logger";
+import pkg from "@/lib/package-json";
 
 // The issue store used during the execution.
 const ISSUES: Issue[] = [];

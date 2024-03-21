@@ -49,7 +49,7 @@ export const promptConfirmOrAbort = async (message: string) => {
       borderStyle: "round",
       textAlignment: "center",
       padding: 1,
-      width: 80,
+      width: 120,
     }),
   );
 
