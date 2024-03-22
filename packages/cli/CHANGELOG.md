@@ -1,5 +1,11 @@
 # dotsecret
 
+## 0.0.0-next.9
+
+### Patch Changes
+
+- [#76](https://github.com/arsnl/dotsecret/pull/76) [`195856c`](https://github.com/arsnl/dotsecret/commit/195856c792d56d9f525fdf2dd1292d3477680652) Thanks [@arsnl](https://github.com/arsnl)! - Add command placeholders
+
 ## 0.0.0-next.8
 
 ### Patch Changes
