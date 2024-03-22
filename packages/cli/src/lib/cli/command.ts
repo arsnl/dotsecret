@@ -59,15 +59,7 @@ export type CommandOptions<T = {}> = {
   cwd: OptionCwd;
 } & T;
 
-export const getCommand = async ({
-  name,
-  description,
-  usages,
-  summary,
-  banner = false,
-  commands = {},
-  options = {},
-}: {
+export type GetCommandOptions = {
   /** The name of the command. */
   name?: string;
   /** The summary of the command. */
@@ -82,7 +74,17 @@ export const getCommand = async ({
   commands?: Commands;
   /** The command options. */
   options?: Options;
-}) => {
+};
+
+export const getCommand = async ({
+  name,
+  description,
+  usages,
+  summary,
+  banner = false,
+  commands = {},
+  options = {},
+}: GetCommandOptions) => {
   const { default: boxen } = await import("boxen");
   const { default: chalk } = await import("chalk");
 
