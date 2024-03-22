@@ -8,35 +8,43 @@ module.exports = {
       "error",
       {
         name: "boxen",
-        message: "Please use @/esm-only/boxen instead.",
+        message:
+          'Please use `const { default: boxen } = await import("boxen");` instead.',
       },
       {
         name: "chalk",
-        message: "Please use @/esm-only/chalk instead.",
+        message:
+          'Please use `const { default: chalk } = await import("chalk");` instead.',
       },
       {
         name: "color-json",
-        message: "Please use @/esm-only/color-json instead.",
+        message:
+          'Please use `const { default: colorJson } = await import("color-json");` instead.',
       },
       {
         name: "execa",
-        message: "Please use @/esm-only/execa instead.",
+        message:
+          'Please use `const { execa, $ } = await import("execa");` instead.',
       },
       {
         name: "find-up",
-        message: "Please use @/esm-only/find-up instead.",
+        message:
+          'Please use `const { findUp } = await import("find-up");` instead.',
       },
       {
         name: "globby",
-        message: "Please use @/esm-only/globby instead.",
+        message:
+          'Please use `const { globby } = await import("globby");` instead.',
       },
       {
         name: "multimatch",
-        message: "Please use @/esm-only/multimatch instead.",
+        message:
+          'Please use `const { default: multimatch } = await import("multimatch");` instead.',
       },
       {
         name: "ora",
-        message: "Please use @/esm-only/ora instead.",
+        message:
+          'Please use `const { default: ora } = await import("ora");` instead.',
       },
     ],
   },

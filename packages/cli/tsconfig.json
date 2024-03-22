@@ -14,9 +14,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@pkg": ["./package.json"]
+      "@root/*": ["./*"]
     }
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "**/*.test.ts", "dist"]
+  "exclude": ["node_modules", "dist"]
 }
