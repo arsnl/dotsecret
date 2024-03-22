@@ -59,7 +59,7 @@
     "chalk": "5.3.0",
     "color-json": "3.0.5",
     "eslint-config-peppy": "3.1.1",
-    "eslint": "8.56.0",
+    "eslint": "8.57.0",
     "execa": "8.0.1",
     "find-up": "7.0.0",
     "globby": "14.0.1",
