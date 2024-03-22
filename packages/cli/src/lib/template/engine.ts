@@ -1,5 +1,5 @@
 import nunjucks from "nunjucks";
-import { getConfig, type GetConfigOptions } from "@/lib/config";
+import { type ConfigOptionExtend, getConfig } from "@/lib/config";
 import {
   filterBase64decode,
   filterBase64encode,
@@ -23,7 +23,7 @@ class TemplateRenderError extends Error {
   }
 }
 
-const filterHandler = (name: string, filter: Function) =>
+const templateFilterHandler = (name: string, filter: Function) =>
   TEMPLATE_ENGINE?.addFilter(name, (...args) => {
     try {
       return filter(...args);
@@ -34,14 +34,7 @@ const filterHandler = (name: string, filter: Function) =>
     }
   });
 
-export type GetTemplateEngineOptions = {
-  /** The configuration options */
-  config?: GetConfigOptions;
-};
-
-export const getTemplateEngine = async (
-  options: GetTemplateEngineOptions = {},
-) => {
+export const getTemplateEngine = async (options: ConfigOptionExtend) => {
   if (TEMPLATE_ENGINE) {
     return TEMPLATE_ENGINE;
   }
@@ -57,17 +50,17 @@ export const getTemplateEngine = async (
     { autoescape: false },
   );
 
-  filterHandler("encodeURIComponent", filterEncodeURIComponent);
-  filterHandler("decodeURIComponent", filterDecodeURIComponent);
-  filterHandler("base64encode", filterBase64encode);
-  filterHandler("base64decode", filterBase64decode);
-  filterHandler("hash", filterHash);
-  filterHandler("encrypt", filterEncrypt);
-  filterHandler("decrypt", filterDecrypt);
-  filterHandler("formatDate", filterFormatDate);
-  filterHandler("json", filterJson);
-  filterHandler("keyValue", filterKeyValue);
-  filterHandler("yaml", filterYaml);
+  templateFilterHandler("encodeURIComponent", filterEncodeURIComponent);
+  templateFilterHandler("decodeURIComponent", filterDecodeURIComponent);
+  templateFilterHandler("base64encode", filterBase64encode);
+  templateFilterHandler("base64decode", filterBase64decode);
+  templateFilterHandler("hash", filterHash);
+  templateFilterHandler("encrypt", filterEncrypt);
+  templateFilterHandler("decrypt", filterDecrypt);
+  templateFilterHandler("formatDate", filterFormatDate);
+  templateFilterHandler("json", filterJson);
+  templateFilterHandler("keyValue", filterKeyValue);
+  templateFilterHandler("yaml", filterYaml);
 
   return TEMPLATE_ENGINE;
 };

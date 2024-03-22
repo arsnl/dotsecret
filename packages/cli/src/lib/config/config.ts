@@ -1,45 +1,9 @@
 import { cosmiconfig } from "cosmiconfig";
 import nodePath from "node:path";
-import { z } from "zod";
 import { issues } from "@/lib/issue";
 import { getAbsolutePath, isFileExists } from "@/lib/utils";
-
-/** The dotsecret configuration. */
-export const ConfigSchema = z
-  .object({
-    /** Weither or not to respect ignore patterns in .gitignore files that apply to the dotsecret files. */
-    gitignore: z
-      .boolean()
-      .default(true)
-      .describe(
-        "Weither or not to respect ignore patterns in .gitignore files that apply to the dotsecret files.",
-      ),
-  })
-  .strict()
-  .describe("The dotsecret configuration.");
-
-export type Config = z.input<typeof ConfigSchema>;
-
-/** The processed dotsecret configuration. */
-export const ConfigOuputSchema = ConfigSchema.extend({
-  /** The current working directory. */
-  cwd: z.string().describe("The current working directory."),
-  /** The dotsecret configuration file path. */
-  config: z.string().describe("The dotsecret configuration file path."),
-  /** The root of the current project. */
-  root: z.string().describe("The root of the current project."),
-})
-  .strict()
-  .describe("The processed dotsecret configuration.");
-
-export type ConfigOuput = z.output<typeof ConfigOuputSchema>;
-
-export type GetConfigOptions = {
-  /** The current working directory. */
-  cwd?: string;
-  /** The path to the configuration file. */
-  file?: string;
-};
+import { ConfigOuputSchema } from "./schema";
+import type { ConfigOption } from "./type";
 
 /**
  * Get the dotsecret configuration.
@@ -51,7 +15,7 @@ export type GetConfigOptions = {
 export const getConfig = async ({
   cwd = process.cwd(),
   file,
-}: GetConfigOptions = {}) => {
+}: ConfigOption = {}) => {
   const moduleName = "secret";
   const explorer = cosmiconfig(moduleName, {
     searchPlaces: [

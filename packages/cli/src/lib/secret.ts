@@ -1,12 +1,9 @@
 import dotenv from "dotenv";
-import { getConfig, type GetConfigOptions } from "@/lib/config";
+import { type ConfigOptionExtend, getConfig } from "@/lib/config";
 import { issues } from "@/lib/issue";
 import { getAbsolutePath, isFileExists } from "@/lib/utils";
 
-export type ReadSecretsOptions = {
-  /** The configuration options */
-  config?: GetConfigOptions;
-};
+export type ReadSecretsOptions = ConfigOptionExtend & {};
 
 /**
  * Read the secrets from the `.secret` file
@@ -18,7 +15,7 @@ export const readSecrets = async <
     [name: string]: string;
   },
 >(
-  options: ReadSecretsOptions = {},
+  options: ReadSecretsOptions,
 ): Promise<T | undefined> => {
   const config = await getConfig(options?.config);
 

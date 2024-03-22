@@ -1,9 +1,9 @@
 import { Argument } from "commander";
 import { parserGlobPatterns } from "./parser";
 
-export type ArgumentTemplates = ReturnType<typeof parserGlobPatterns>;
+export type ArgumentGlobPatterns = ReturnType<typeof parserGlobPatterns>;
 
-export const argumentTemplates = new Argument(
-  "[templates]",
-  "Templates glob patterns",
+export const argumentGlobPatterns = new Argument(
+  "glob-patterns",
+  "Glob patterns filter",
 ).argParser(parserGlobPatterns);

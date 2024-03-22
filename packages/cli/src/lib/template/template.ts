@@ -1,5 +1,5 @@
 import nodeFs from "node:fs";
-import { getConfig, type GetConfigOptions } from "@/lib/config";
+import { getConfig } from "@/lib/config";
 import { issues } from "@/lib/issue";
 import {
   getAbsolutePath,
@@ -11,23 +11,43 @@ import {
 } from "@/lib/utils";
 import { getTemplateData } from "./data";
 import { getTemplateEngine } from "./engine";
+import {
+  type TemplateInfo,
+  type TemplateOptions,
+  type TemplatesOptions,
+} from "./type";
 
-export type TemplateInfo = {
-  /** The template file absolute path */
-  template: string;
-  /** The last time the template was updated. */
-  lastUpdate: Date;
-  /** The output file absolute path */
-  output: string;
-  /** The last time the output was written. */
-  lastOutput?: Date;
-};
+/**
+ * Search the templates
+ *
+ * @param options - The options to search the templates
+ * @returns A list of paths of the templates found
+ */
+export const searchTemplates = async (options: TemplatesOptions = {}) => {
+  const { globby } = await import("globby");
+  const { default: multimatch } = await import("multimatch");
+  const { globPatterns = ["**/*.secret"] } = options;
+  const config = await getConfig(options?.config);
 
-export type GetTemplateInfoOptions = {
-  /** The template file to get. */
-  file: string;
-  /** The configuration options */
-  config?: GetConfigOptions;
+  if (!config) {
+    return [];
+  }
+
+  const found = await globby(["**/*.secret", "!**/.secret"], {
+    cwd: config.root,
+    gitignore: config.gitignore,
+    ignoreFiles: [
+      ...(config.gitignore ? ["**/.gitignore"] : []),
+      "**/.secretignore",
+    ],
+    dot: true,
+  });
+
+  const filtered = multimatch(found, globPatterns, {
+    dot: true,
+  });
+
+  return filtered;
 };
 
 /**
@@ -36,9 +56,7 @@ export type GetTemplateInfoOptions = {
  * @param options - The options to get the template information
  * @returns The template information if the template exists, undefined otherwise
  */
-export const getTemplateInfo = async (
-  options: GetTemplateInfoOptions,
-): Promise<TemplateInfo | undefined> => {
+export const getTemplateInfo = async (options: TemplateOptions) => {
   const config = await getConfig(options?.config);
 
   if (!config) {
@@ -95,67 +113,31 @@ export const getTemplateInfo = async (
     });
   }
 
-  return {
+  const templateInfo: TemplateInfo = {
     template: absoluteTemplate,
     lastUpdate,
     output: absoluteOutput,
     lastOutput,
   };
-};
 
-export type SearchTemplatesOptions = {
-  /** The glob pattern of the templates to search. */
-  globPattern?: string[];
-  /** The configuration options */
-  config?: GetConfigOptions;
+  return templateInfo;
 };
 
 /**
- * Search the templates
+ * Get the templates information
  *
- * @param options - The options to search the templates
- * @returns The templates information of the templates found
+ * @param options - The options to get the templates information
+ * @returns The templates information
  */
-export const searchTemplates = async (
-  options: SearchTemplatesOptions = {},
-): Promise<TemplateInfo[]> => {
-  const { globby } = await import("globby");
-  const { default: multimatch } = await import("multimatch");
-  const { globPattern = ["**/*.secret"] } = options;
-  const config = await getConfig(options?.config);
+export const getTemplatesInfo = async (options: TemplatesOptions = {}) => {
+  const config = options?.config;
+  const templates = await searchTemplates(options);
 
-  if (!config) {
-    return [];
-  }
-
-  const found = await globby(["**/*.secret", "!**/.secret"], {
-    cwd: config.root,
-    gitignore: config.gitignore,
-    ignoreFiles: [
-      ...(config.gitignore ? ["**/.gitignore"] : []),
-      "**/.secretignore",
-    ],
-    dot: true,
-  });
-
-  const filtered = multimatch(found, globPattern, {
-    dot: true,
-  });
-
-  const templates = await Promise.all(
-    filtered.map(async (file) =>
-      getTemplateInfo({ file, config: options?.config }),
-    ),
+  const templatesInfo = await Promise.all(
+    templates.map(async (file) => getTemplateInfo({ file, config })),
   );
 
-  return templates.filter((template): template is TemplateInfo => !!template);
-};
-
-export type WriteOutputOptions = {
-  /** The template file to write. */
-  file: string;
-  /** The configuration options */
-  config?: GetConfigOptions;
+  return templatesInfo.filter((info): info is TemplateInfo => !!info);
 };
 
 /**
@@ -163,10 +145,10 @@ export type WriteOutputOptions = {
  *
  * @param options - The options to write the output
  */
-export const writeOutput = async (options: WriteOutputOptions) => {
+export const writeOutput = async (options: TemplateOptions) => {
   const info = await getTemplateInfo(options);
-  const engine = await getTemplateEngine({ config: options?.config });
   const data = await getTemplateData(options);
+  const engine = await getTemplateEngine({ config: options?.config });
 
   if (!info || !engine || !data) {
     return;
@@ -181,11 +163,17 @@ export const writeOutput = async (options: WriteOutputOptions) => {
   }
 };
 
-export type DeleteOutputOptions = {
-  /** The template file to delete. */
-  file: string;
-  /** The configuration options */
-  config?: GetConfigOptions;
+/**
+ * Write the output files
+ *
+ * @param options - The options to write the outputs
+ */
+export const writeOutputs = async (options: TemplatesOptions = {}) => {
+  const templatesInfo = await getTemplatesInfo(options);
+
+  await Promise.all(
+    templatesInfo.map(async (info) => writeOutput({ file: info.template })),
+  );
 };
 
 /**
@@ -193,7 +181,7 @@ export type DeleteOutputOptions = {
  *
  * @param options - The options to delete the output
  */
-export const deleteOutput = async (options: DeleteOutputOptions) => {
+export const deleteOutput = async (options: TemplateOptions) => {
   const info = await getTemplateInfo(options);
 
   if (!info?.lastOutput) {
@@ -205,4 +193,17 @@ export const deleteOutput = async (options: DeleteOutputOptions) => {
   } catch (error) {
     issues.error(error);
   }
+};
+
+/**
+ * Delete the output files
+ *
+ * @param options - The options to delete the outputs
+ */
+export const deleteOutputs = async (options: TemplatesOptions = {}) => {
+  const templatesInfo = await getTemplatesInfo(options);
+
+  await Promise.all(
+    templatesInfo.map(async (info) => deleteOutput({ file: info.template })),
+  );
 };

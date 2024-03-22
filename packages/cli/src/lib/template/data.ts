@@ -1,14 +1,9 @@
-import { type GetConfigOptions } from "@/lib/config";
+import { type ConfigOptionExtend } from "@/lib/config";
 import { readSecrets } from "@/lib/secret";
 
 let TEMPLATE_DATA: any;
 
-export type GetTemplateDataOptions = {
-  /** The configuration options */
-  config?: GetConfigOptions;
-};
-
-export const getTemplateData = async (options: GetTemplateDataOptions = {}) => {
+export const getTemplateData = async (options: ConfigOptionExtend) => {
   if (TEMPLATE_DATA) {
     return { ...TEMPLATE_DATA };
   }

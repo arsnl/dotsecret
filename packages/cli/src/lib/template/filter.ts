@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import yaml from "js-yaml";
 import nodeCrypto from "node:crypto";
+
 /**
  * Encodes a text string as a valid component of a Uniform Resource Identifier (URI)
  */

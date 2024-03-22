@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { getRenderCommand } from "@/cli/render";
-import { getCommand } from "@/lib/cli/command";
+import { getCommand } from "@/lib/cli";
 import { issues } from "@/lib/issue";
 import pkg from "@/lib/package-json";
 
