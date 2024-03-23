@@ -1,5 +1,15 @@
 # dotsecret
 
+## 0.0.0-next.11
+
+### Patch Changes
+
+- [#83](https://github.com/arsnl/dotsecret/pull/83) [`7d350ce`](https://github.com/arsnl/dotsecret/commit/7d350ce0e662dece4a159e68beea1b549e7a27c9) Thanks [@arsnl](https://github.com/arsnl)! - Fix templates paths and issues logging
+
+  - Fix templates paths to use absolute paths
+  - Fix issues logging to use the relative paths relative to the root of the project
+  - Remove the issues logging maximum width on print
+
 ## 0.0.0-next.10
 
 ### Patch Changes
