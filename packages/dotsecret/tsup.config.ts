@@ -2,7 +2,6 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig((options) => ({
-  name: "dotsecret",
   target: "node16",
   entry: ["src/index.ts", "src/cli/index.ts"],
   outDir: "dist",

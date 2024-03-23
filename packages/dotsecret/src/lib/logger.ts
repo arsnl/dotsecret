@@ -1,4 +1,4 @@
-/* eslint-disable no-console -- Only place in the CLI where the no-console should be accepted */
+/* eslint-disable no-console -- Only place where the no-console should be accepted */
 export const LOG_LEVELS = ["error", "warn", "info", "debug"] as const;
 
 export const LOG_LEVEL_DEFAULT = LOG_LEVELS[2];

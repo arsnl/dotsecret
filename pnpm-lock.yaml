@@ -76,7 +76,7 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
 
-  packages/cli:
+  packages/dotsecret:
     dependencies:
       axios:
         specifier: 1.6.7
