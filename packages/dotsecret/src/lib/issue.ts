@@ -126,13 +126,10 @@ export const issues = {
         border: getBorderCharacters("void"),
         columnDefault: {
           paddingLeft: 0,
-          paddingRight: 0,
+          paddingRight: 2,
           wrapWord: true,
         },
-        columns: [
-          { width: 10, wrapWord: true },
-          { width: 70, wrapWord: true },
-        ],
+        columns: [{ alignment: "right" }, { wrapWord: true }],
         drawHorizontalLine: () => false,
       }),
     );

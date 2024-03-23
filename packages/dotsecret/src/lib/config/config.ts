@@ -1,7 +1,7 @@
 import { cosmiconfig } from "cosmiconfig";
 import nodePath from "node:path";
 import { issues } from "@/lib/issue";
-import { getAbsolutePath, isFileExists } from "@/lib/utils";
+import { getAbsolutePath, getRelativePath, isFileExists } from "@/lib/utils";
 import { ConfigOuputSchema } from "./schema";
 import type { ConfigOption } from "./type";
 
@@ -34,7 +34,7 @@ export const getConfig = async ({
   const fileExists = file && isFileExists(getAbsolutePath(file, cwd));
   if (file && !fileExists) {
     issues.add({
-      message: `Configuration file not found: ${file}`,
+      message: `Configuration file not found: ${getRelativePath(file, cwd)}`,
     });
 
     return undefined;
