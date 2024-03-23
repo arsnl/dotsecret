@@ -1,5 +1,5 @@
 import { Option } from "commander";
-import { LOG_LEVEL_DEFAULT, LOG_LEVELS } from "@/lib/logger";
+import { LOG_LEVEL_DEFAULT, LOG_LEVELS, type LogLevel } from "@/lib/logger";
 import { parserFileExists, parserPathExists } from "./parser";
 
 export type OptionConfig = ReturnType<typeof parserFileExists>;
@@ -9,10 +9,10 @@ export const optionConfig = new Option(
   "Specify a configuration file",
 ).argParser(parserFileExists);
 
-export type OptionLogLevel = (typeof LOG_LEVELS)[number];
+export type OptionLogLevel = Exclude<LogLevel, "log">;
 
 export const optionLogLevel = new Option("-l, --log-level <level>", "Log level")
-  .choices(LOG_LEVELS)
+  .choices(Object.keys(LOG_LEVELS).filter((level) => level !== "log"))
   .default(LOG_LEVEL_DEFAULT);
 
 export type OptionCwd = ReturnType<typeof parserPathExists>;

@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { setLogLevel } from "@/lib/logger";
 import pkg from "@/lib/package";
 import {
   type OptionConfig,
@@ -146,6 +147,12 @@ Version: ${pkg.version}
   mergedCommands.help
     ? command.helpCommand("help [command]", "Display help for a command")
     : command.helpCommand(false);
+
+  command.hook("preAction", async (_thisCommand, actionCommand) => {
+    if (actionCommand.opts().logLevel) {
+      setLogLevel(actionCommand.opts().logLevel);
+    }
+  });
 
   return command;
 };

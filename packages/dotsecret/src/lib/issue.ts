@@ -1,7 +1,7 @@
 import stringify from "fast-json-stable-stringify";
 import nodeCrypto from "node:crypto";
 import { getBorderCharacters, table } from "table";
-import { getLogger } from "@/lib/logger";
+import { logger } from "@/lib/logger";
 import pkg from "@/lib/package";
 
 // The issue store used during the execution.
@@ -101,13 +101,12 @@ export const issues = {
   /** Print the issues. */
   print: async (filters: IssuesFilters = {}) => {
     const { default: chalk } = await import("chalk");
-    const { logger } = getLogger();
     const filteredIssues = issues.get(filters);
     const counts = issues.counts(filters);
     const msgColor = counts.errors ? chalk.red.bold : chalk.yellow.bold;
 
     if (counts.total === 0) {
-      logger.log(chalk.dim("No issues found"));
+      logger.cli(chalk.dim("No issues found"));
       return issues;
     }
 
@@ -120,9 +119,9 @@ export const issues = {
       rows.push([issueColor(`${fix}${issue.severity}`), issue.message]);
     });
 
-    logger.log(msgColor("The following issues were found.\n"));
+    logger.cli(msgColor("The following issues were found.\n"));
 
-    logger.log(
+    logger.cli(
       table(rows, {
         border: getBorderCharacters("void"),
         columnDefault: {
@@ -138,7 +137,7 @@ export const issues = {
       }),
     );
 
-    logger.log(
+    logger.cli(
       msgColor(
         `${counts.errors ? "✖" : "⚠"} ${counts.total} issue${
           counts.total > 1 ? "s" : ""
@@ -149,7 +148,7 @@ export const issues = {
     );
 
     counts.fixes &&
-      logger.log(
+      logger.cli(
         msgColor(
           `⚒ ${counts.fixes} fix${
             counts.fixes > 1 ? "es" : ""
@@ -161,7 +160,7 @@ export const issues = {
     const unknownIssues = { counts: { total: 0 } };
 
     if (unknownIssues.counts.total) {
-      logger.log(
+      logger.cli(
         msgColor(
           `\n${unknownIssues.counts.total} unknown issue${
             unknownIssues.counts.total > 1 ? "s" : ""

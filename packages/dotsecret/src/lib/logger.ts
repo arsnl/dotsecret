@@ -1,47 +1,37 @@
-/* eslint-disable no-console -- Only place where the no-console should be accepted */
-export const LOG_LEVELS = ["error", "warn", "info", "debug"] as const;
+import winston from "winston";
 
-export const LOG_LEVEL_DEFAULT = LOG_LEVELS[2];
+export type LogLevel = keyof typeof LOG_LEVELS;
 
-export type LogLevel = (typeof LOG_LEVELS)[number];
+export const LOG_LEVELS = {
+  cli: 0, // cli is not a valid level, but we use it to log everything when running the CLI
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 2,
+} as const;
 
-const shouldLog = (level: LogLevel, currentLevel: LogLevel) =>
-  LOG_LEVELS.indexOf(level) <= LOG_LEVELS.indexOf(currentLevel);
+export const LOG_LEVEL_DEFAULT: LogLevel = "info";
 
-export type GetLoggerOptions = {
-  /** The log level */
-  level?: LogLevel;
+const transports = {
+  console: new winston.transports.Console({ level: LOG_LEVEL_DEFAULT }),
 };
 
-export const getLogger = ({
-  level = LOG_LEVEL_DEFAULT,
-}: GetLoggerOptions = {}) => {
-  const logger = {
-    // Used to bypass the log level check. Useful for messages that should always be printed.
-    log: (...args: Parameters<typeof console.log>) => {
-      console.log(...args);
-    },
-    error: (...args: Parameters<typeof console.error>) => {
-      if (shouldLog("error", level)) {
-        console.error(...args);
-      }
-    },
-    warn: (...args: Parameters<typeof console.warn>) => {
-      if (shouldLog("warn", level)) {
-        console.warn(...args);
-      }
-    },
-    info: (...args: Parameters<typeof console.info>) => {
-      if (shouldLog("info", level)) {
-        console.info(...args);
-      }
-    },
-    debug: (...args: Parameters<typeof console.debug>) => {
-      if (shouldLog("debug", level)) {
-        console.debug(...args);
-      }
-    },
-  };
+const format = winston.format.combine(
+  winston.format.printf(({ message }) => {
+    const formattedMessage =
+      typeof message === "object" ? JSON.stringify(message) : message;
 
-  return { logger };
+    return formattedMessage;
+  }),
+);
+
+export const setLogLevel = (level: LogLevel) => {
+  transports.console.level = level;
 };
+
+export const logger = winston.createLogger({
+  levels: LOG_LEVELS,
+  format,
+  transports: Object.values(transports),
+}) as winston.Logger &
+  Record<keyof typeof LOG_LEVELS, winston.LeveledLogMethod>;
