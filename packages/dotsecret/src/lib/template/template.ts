@@ -4,6 +4,7 @@ import { issues } from "@/lib/issue";
 import {
   getAbsolutePath,
   getFileLastUpdate,
+  getRelativePath,
   isFileExists,
   isPathIgnoredByGit,
   isPathInGitRepository,
@@ -40,6 +41,7 @@ export const searchTemplates = async (options: TemplatesOptions = {}) => {
       ...(config.gitignore ? ["**/.gitignore"] : []),
       "**/.secretignore",
     ],
+    absolute: true,
     dot: true,
   });
 
@@ -72,21 +74,21 @@ export const getTemplateInfo = async (options: TemplateOptions) => {
 
   if (!isFileExists(absoluteTemplate)) {
     issues.add({
-      message: `Template does not exist: ${template}`,
+      message: `Template does not exist: ${getRelativePath(template, config.root)}`,
     });
     return undefined;
   }
 
   if (!(await isPathWriteable(absoluteOutput))) {
     issues.add({
-      message: `Output is not writeable: ${output}`,
+      message: `Output is not writeable: ${getRelativePath(output, config.root)}`,
     });
     return undefined;
   }
 
   if (!lastOutput) {
     issues.add({
-      message: `Output does not exist: ${output}`,
+      message: `Output does not exist: ${getRelativePath(output, config.root)}`,
       severity: "warn",
       fix: async () => {
         await writeOutput(options);
@@ -96,7 +98,7 @@ export const getTemplateInfo = async (options: TemplateOptions) => {
 
   if (!!lastOutput && lastOutput < lastUpdate) {
     issues.add({
-      message: `Output is outdated: ${output}`,
+      message: `Output is outdated: ${getRelativePath(output, config.root)}`,
       severity: "warn",
       fix: async () => {
         await writeOutput(options);
@@ -109,7 +111,7 @@ export const getTemplateInfo = async (options: TemplateOptions) => {
     !(await isPathIgnoredByGit(absoluteOutput))
   ) {
     issues.add({
-      message: `Output is not gitignored: ${output}`,
+      message: `Output is not gitignored: ${getRelativePath(output, config.root)}`,
     });
   }
 

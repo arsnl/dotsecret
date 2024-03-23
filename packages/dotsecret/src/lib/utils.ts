@@ -12,6 +12,16 @@ export const getAbsolutePath = (path: string, cwd = process.cwd()) =>
   nodePath.isAbsolute(path) ? path : nodePath.resolve(cwd, path);
 
 /**
+ * Get the relative path of a given path
+ *
+ * @param path The path to get the relative path of
+ * @param cwd The current working directory. Default: process.cwd()
+ * @returns The relative path
+ */
+export const getRelativePath = (path: string, cwd = process.cwd()) =>
+  nodePath.relative(cwd, path);
+
+/**
  * Check if the path exists
  *
  * @param path The path to check
