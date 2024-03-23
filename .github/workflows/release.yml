@@ -30,8 +30,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
-      - name: Build CLI
-        run: pnpm build:cli
+      - name: Build Package
+        run: pnpm build:pkg
 
       - name: Publish to npm
         id: changesets
