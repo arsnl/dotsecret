@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import pkg from "@/lib/package-json";
+import pkg from "@/lib/package";
 import {
   type OptionConfig,
   optionConfig,

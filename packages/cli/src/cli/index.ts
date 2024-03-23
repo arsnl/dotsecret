@@ -15,15 +15,17 @@ import { getRenderCommand } from "@/cli/render";
 import { getRenewCommand } from "@/cli/renew";
 import { getVersionsCommand } from "@/cli/versions";
 import { getWhoamiCommand } from "@/cli/whoami";
-import { getCommand } from "@/lib/cli";
+import { getCommand, updateNotify } from "@/lib/cli";
 import { issues } from "@/lib/issue";
-import pkg from "@/lib/package-json";
+import pkg from "@/lib/package";
 
 const description = `Dotsecret is designed to simplify the process of fetching secrets from secrets managers and render files with them.
 
 It uses configuration and templates files to specify the secrets to fetch and the output files to render. Ideal for automating the creation of .env, .npmrc, and other files you don't want on your git repository.`;
 
 const cli = async () => {
+  await updateNotify();
+
   const command = await getCommand({
     name: pkg.name,
     summary: pkg.description,

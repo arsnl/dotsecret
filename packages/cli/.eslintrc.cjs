@@ -46,6 +46,11 @@ module.exports = {
         message:
           'Please use `const { default: ora } = await import("ora");` instead.',
       },
+      {
+        name: "update-notifier",
+        message:
+          'Please use `const { default: updateNotifier } = await import("update-notifier")` instead.',
+      },
     ],
   },
 };
