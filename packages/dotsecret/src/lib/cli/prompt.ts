@@ -1,10 +1,9 @@
 import _prompts from "prompts";
-import { getLogger } from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 const handlePromptCancel = async () => {
   const { default: chalk } = await import("chalk");
-  const { logger } = getLogger();
-  logger.log(`${chalk.red("✖")} Process exited by user`);
+  logger.info(`${chalk.red("✖")} Process exited by user`);
   process.exit(0);
 };
 
@@ -41,9 +40,8 @@ export const promptConfirm = async ({
 export const promptConfirmOrAbort = async (message: string) => {
   const { default: chalk } = await import("chalk");
   const { default: boxen } = await import("boxen");
-  const { logger } = getLogger();
 
-  logger.log(
+  logger.cli(
     boxen(message, {
       borderColor: "red",
       borderStyle: "round",
@@ -56,7 +54,7 @@ export const promptConfirmOrAbort = async (message: string) => {
   const saidYes = await promptConfirm({ message: "Do you want to continue?" });
 
   if (!saidYes) {
-    logger.info(`${chalk.red("✖")} Aborded`);
+    logger.cli(`${chalk.red("✖")} Aborded`);
     process.exit(0);
   }
 };

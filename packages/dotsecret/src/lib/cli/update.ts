@@ -1,4 +1,4 @@
-import { getLogger } from "@/lib/logger";
+import { logger } from "@/lib/logger";
 import pkg from "@/lib/package";
 
 export const updateNotify = async () => {
@@ -6,7 +6,6 @@ export const updateNotify = async () => {
   const { default: boxen } = await import("boxen");
   const { default: updateNotifier } = await import("update-notifier");
 
-  const { logger } = getLogger();
   const notifier = updateNotifier({
     pkg,
     distTag: pkg.distTag,

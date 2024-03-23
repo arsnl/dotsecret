@@ -1,4 +1,5 @@
 import { getCommand } from "@/lib/cli";
+import { logger } from "@/lib/logger";
 
 export const getOpenCommand = async () => {
   const command = await getCommand({
@@ -11,7 +12,7 @@ export const getOpenCommand = async () => {
 
   command.action(async (options) => {
     const config = { cwd: options.cwd, file: options.config };
-    console.log("To be implemented...");
+    logger.cli("To be implemented...");
   });
 
   return command;
