@@ -1,5 +1,17 @@
 # dotsecret
 
+## 0.0.0-next.10
+
+### Patch Changes
+
+- [#78](https://github.com/arsnl/dotsecret/pull/78) [`7eb3270`](https://github.com/arsnl/dotsecret/commit/7eb327000aadd8e0b83c684d48ca4967c898d5a4) Thanks [@arsnl](https://github.com/arsnl)! - Add update notifier
+
+- [#82](https://github.com/arsnl/dotsecret/pull/82) [`9e9dd43`](https://github.com/arsnl/dotsecret/commit/9e9dd437e788650a6cf20d8e1e14593b33d23281) Thanks [@arsnl](https://github.com/arsnl)! - Replace the logger by Winston
+
+- [#81](https://github.com/arsnl/dotsecret/pull/81) [`d401b69`](https://github.com/arsnl/dotsecret/commit/d401b690b2ad9eaa4a8ebdf3b4dc9467a7ba6286) Thanks [@arsnl](https://github.com/arsnl)! - Move packages/cli to packages/dotsecret folder
+
+  - Move the `cli` package to the `dotsecret` folder to better reflect the package's purpose and functionality.
+
 ## 0.0.0-next.9
 
 ### Patch Changes
